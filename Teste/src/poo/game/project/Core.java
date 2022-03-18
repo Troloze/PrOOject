@@ -2,9 +2,7 @@ package poo.game.project;
 
 public class Core {
 
-	
-	
-	public static void main (String a[]) {
+	public static void main (String[] args) {
 		System.out.printf("Troloze");
 	}
 	
