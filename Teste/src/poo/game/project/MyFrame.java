@@ -1,7 +1,5 @@
 package poo.game.project;
 
-import java.awt.Dimension;
-
 import javax.swing.JFrame;
 
 public final class MyFrame extends JFrame {
