@@ -5,6 +5,9 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 public class MainCharacter extends JLabel{
+
+	private static final long serialVersionUID = 741880497682412958L;
+	
 	MyKeyListener keyListener;
 	
 	public MainCharacter() {

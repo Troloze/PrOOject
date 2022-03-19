@@ -6,6 +6,9 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 
 public class MyPanel extends JPanel implements Runnable {
+	
+	private static final long serialVersionUID = 3505784181017226130L;
+	
 	private final int PANEL_WIDTH = 1280;
 	private final int PANEL_HEIGTH = 960;
 	
