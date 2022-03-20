@@ -14,6 +14,7 @@ public class MyPanel extends JPanel implements Runnable {
 	private final int FPS = 60;
 	
 	Thread gameThread;
+	InputHandler input;
 	
 	MainCharacter mainCharacter;
 	
@@ -22,7 +23,10 @@ public class MyPanel extends JPanel implements Runnable {
 		this.setBackground(Color.black);
 		this.setDoubleBuffered(true);
 		this.setLayout(null);
-		this.setOpaque(true);
+		this.setOpaque(false);
+		
+		input = InputHandler.getInstance();
+		this.add(input);
 		
 		mainCharacter = new MainCharacter();
 		
@@ -54,6 +58,7 @@ public class MyPanel extends JPanel implements Runnable {
 			if(delta >= 1) {
 				b = (currentTime - a) / ns;
 				a = currentTime;
+				input.updateInputStatus();
 				mainCharacter.move(b);
 				delta--;
 			}
