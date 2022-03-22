@@ -9,19 +9,17 @@ public final class MyFrame extends JFrame {
 	MyPanel gamePanel;
 	
 	public MyFrame() {
+		gamePanel = new MyPanel();
+		
+		this.setTitle("PrOOject");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
-		this.setTitle("PrOOject");
+		this.setVisible(true);
 		
-		gamePanel = new MyPanel();
 		this.add(gamePanel);
 		
 		this.pack();
-		
 		this.setLocationRelativeTo(null);
-		this.setVisible(true);
-		
-		System.out.printf("ola");
 		
 		gamePanel.startGame();
 	}
