@@ -17,21 +17,27 @@ public class MainCharacter extends Entity {
 	InputHandler input;
 	
 	public MainCharacter(MyPanel panel) {
+		
 		input = InputHandler.getInstance();
 		position = new Point2D.Double();
 		
 		defaultPlayerStatus();
 		getPlayerImage();
+		
 	}
 	
 	public void defaultPlayerStatus() {
+		
 		position.setLocation(300, 300);
+		
 	}
 	
 	public void getPlayerImage() {
+		
 		sprite = new Sprite();
 		Image image = new ImageIcon("C:\\Users\\tiago\\git\\PrOOject\\Teste\\sprites\\player\\sprite.png").getImage();
 		sprite.sprite = image;
+		
 		/*try {
 			sprite.sprite = ImageIO.read(getClass().getResourceAsStream("/player/knight.png"));
 		} catch (IOException e) {
