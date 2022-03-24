@@ -1,4 +1,4 @@
-package poo.game.project;
+package game;
 
 public enum ShapeData {
 	SHOOTER	(
