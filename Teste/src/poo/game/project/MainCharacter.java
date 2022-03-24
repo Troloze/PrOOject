@@ -1,23 +1,20 @@
 package poo.game.project;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.geom.Point2D;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 public class MainCharacter extends Entity {
 	
 	private final int PLAYER_SPEED = 500;
 	
 	Sprite sprite;
+	FileHandler fileHandler;
 	InputHandler input;
 	
 	public MainCharacter(MyPanel panel) {
 		
+		sprite = new Sprite();
+		fileHandler = FileHandler.getInstance();
 		input = InputHandler.getInstance();
 		position = new Point2D.Double();
 		
@@ -33,16 +30,10 @@ public class MainCharacter extends Entity {
 	}
 	
 	public void getPlayerImage() {
-		
-		sprite = new Sprite();
-		Image image = new ImageIcon("C:\\Users\\tiago\\git\\PrOOject\\Teste\\sprites\\player\\sprite.png").getImage();
-		sprite.sprite = image;
-		
-		/*try {
-			sprite.sprite = ImageIO.read(getClass().getResourceAsStream("/player/knight.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+		sprite.entityImage = fileHandler.openImage("C:/Users/tiago/git/PrOOject/Teste/sprites/player/sprite.png");
+		/*sprite = new Sprite();
+		Image image = new ImageIcon("C:/Users/tiago/git/PrOOject/Teste/sprites/player/sprite.png").getImage();
+		sprite.entityImage = image;*/
 	}
 	
 	public void update(double delta) {
@@ -53,7 +44,7 @@ public class MainCharacter extends Entity {
 	
 	public void draw(Graphics2D g2) {
 		
-		g2.drawImage(sprite.sprite, (int) position.getX(), (int) position.getY(), 300, 300, null);
+		g2.drawImage(sprite.entityImage, (int) position.getX(), (int) position.getY(), 300, 300, null);
 		
 		g2.dispose();
 		

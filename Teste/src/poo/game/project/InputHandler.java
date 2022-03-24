@@ -36,8 +36,6 @@ public final class InputHandler extends JComponent{
 	
 	private InputHandler() {
 		this.setBounds(0, 0, 1280, 960);
-		//this.setOpaque(true);
-		//this.setBackground(Color.red);
 		this.setFocusable(true);
 		this.setLayout(null);
 		

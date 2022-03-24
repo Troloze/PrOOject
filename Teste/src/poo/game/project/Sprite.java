@@ -6,7 +6,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 public class Sprite {
-	public Image sprite;
+	public Image entityImage;
 	private Point2D position;
 	private Point2D scale;
 	private Renderer renderer;
