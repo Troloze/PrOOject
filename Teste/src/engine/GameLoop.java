@@ -1,14 +1,18 @@
 package engine;
 
+import game.Game;
+
 public final class GameLoop {
 	
 	private static GameLoop instance;
 	
-	private Thread gameThread;	
+	private Thread gameThread;
+	private Game game;
 	private InputHandler input;
 	
-	public GameLoop() {
+	private GameLoop() {
 		input = InputHandler.getInstance();
+		game = Game.getInstance();
 	}
 	
 	public void startLoop() {
@@ -24,9 +28,9 @@ public final class GameLoop {
 	}
 	
 	public void loop() {
-		double ns = 1000000000.0;
+		double nanoSeconds = 1000000000.0;
 		int fps = MyPanel.getFPS();
-		double drawInterval = ns/fps;
+		double drawInterval = nanoSeconds/fps;
 		double delta = 0;
 		double lastTime = System.nanoTime();
 		double currentTime;
@@ -40,13 +44,13 @@ public final class GameLoop {
 			lastTime = currentTime;
 	
 			if(delta >= 1) {
-				b = (currentTime - a) / ns;
+				b = (currentTime - a) / nanoSeconds;
 				a = currentTime;
+				
 				input.updateInputStatus();
-				if (input.getInput(InputHandler.KEY_UP) == 0) {
-					System.out.println("HEY");
-				}
+				game.gameUpdate(b);
 				MyPanel.getInstance().repaint();
+				
 				delta--;
 			}
 		}

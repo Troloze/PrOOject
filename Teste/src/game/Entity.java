@@ -1,6 +1,7 @@
 package game;
 
+import java.awt.geom.Point2D;
+
 public class Entity {
-	private int x, y;
-	private int speed;
+	public Point2D position;
 }

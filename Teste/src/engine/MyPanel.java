@@ -2,8 +2,13 @@ package engine;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
+
+import game.Game;
+import game.MainCharacter;
 
 public final class MyPanel extends JPanel implements Runnable {
 	
@@ -12,7 +17,7 @@ public final class MyPanel extends JPanel implements Runnable {
 	private static MyPanel instance;
 	
 	private static final int PANEL_WIDTH = 1280;
-	private static final int PANEL_HEIGTH = 960;
+	private static final int PANEL_HEIGHT = 960;
 	private static final int FPS = 60;
 	
 	public static int getFPS() {
@@ -21,18 +26,20 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	private InputHandler input;
 	private GameLoop gameLoop;
-	
-	MainCharacter mainCharacter;
+	private Game game;
 	
 	private MyPanel() {
-		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGTH));
-		this.setBackground(Color.black);
-		this.setDoubleBuffered(true);
-		this.setLayout(null);
-		this.setOpaque(false);
-		
 		gameLoop = GameLoop.getInstance();
 		input = InputHandler.getInstance();
+		game = Game.getInstance();
+		
+		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+		this.setBackground(Color.blue);
+		this.setDoubleBuffered(true);
+		this.setLayout(null);
+		this.setOpaque(true);
+		this.setVisible(true);
+		
 		this.add(input);
 	}
 	
@@ -52,12 +59,14 @@ public final class MyPanel extends JPanel implements Runnable {
 		gameLoop.loop();		
 	}
 	
-	public void update() {
+	public void paint(Graphics g) {
+		g.setColor(new Color(0x1C, 0x1C, 0x27));
+		g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
 		
-	}
-	
-	public void paint() {
+		Graphics2D g2 = (Graphics2D) g;
 		
-	}
+		game.gamePaint(g2);
 		
+		g.dispose();
+	}	
 }

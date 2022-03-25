@@ -21,8 +21,6 @@ public final class MyFrame extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
-		System.out.printf("ola");
-		
 		gamePanel.startGame();
 	}
 }
