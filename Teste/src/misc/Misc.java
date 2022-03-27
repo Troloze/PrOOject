@@ -3,22 +3,31 @@ package misc;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-public class Miscellaneous {
+public class Misc {
 	
-	public static class Misc {
+	public static class Other {
+		
+		public static final double nanoSecond = 1000000000.0;
 		
 		public static double getAngleBetween(Point2D a, Point2D b) {
 			return Math.toDegrees(Math.atan2(b.getY() - a.getY(), b.getX() - a.getX()));
 		}
 		
+		public static Point2D rotateAround(Point2D src, double dist, double angle) {
+			double x = Math.cos(angle) * dist + src.getX();
+			double y = Math.sin(angle) * dist + src.getY();
+			
+			return new Point2D.Double(x, y);
+		}
+	
 	}
 	
 	public static class Background {
 		
-		public static final double TILE_HEIGHT = 1.0;
+		public static final double TILE_WIDTH = 100.0;
+		public static final double TILE_HEIGHT = TILE_WIDTH/2.0 * 1.73205080757;
 		public static final double TILE_HEIGHT_O3 = TILE_HEIGHT/3.0;
 		public static final double TILE_HEIGHT_2O3 = TILE_HEIGHT_O3 * 2;
-		public static final double TILE_WIDTH = 1.0;
 		public static final double TILE_WIDTH_O2 = TILE_WIDTH/2.0;
 		
 		public static Point world2Back(Point2D offset, Point2D worldPos) {

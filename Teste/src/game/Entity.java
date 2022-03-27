@@ -2,6 +2,16 @@ package game;
 
 import java.awt.geom.Point2D;
 
-public class Entity {
+public abstract class Entity {
 	public Point2D position;
+	
+	
+	public abstract Entity newInstance();
+	
+	public abstract void update();
+	
+	/**
+	 * REMOVER TODAS AS REFERENCIAS AO OBJETO PARA PERMITIR O COLETOR DE LIXO REALIZAR A COLETA DO OBJETO
+	 */
+	public abstract void destroy();
 }

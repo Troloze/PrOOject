@@ -1,14 +1,13 @@
 package game;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 
 import engine.FileHandler;
 import engine.InputHandler;
-import engine.MyPanel;
+import misc.Misc;
 
 public class MainCharacter extends Entity {
 	
@@ -47,7 +46,7 @@ public class MainCharacter extends Entity {
 	
 	public void getPlayerImage() {
 		
-		sprite = fileHandler.openImage("sprites/player/HQ.png");
+		sprite = fileHandler.openImage("sprites/player/MQ.png");
 		
 	}
 	
@@ -58,8 +57,9 @@ public class MainCharacter extends Entity {
 	}
 	
 	public void draw(Graphics2D g2) {
-		
-		g2.drawImage(sprite, (int) position.getX(), (int) position.getY(), 50, 50, null);
+		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHints(rh);
+		g2.drawImage(sprite, (int) position.getX(), (int) position.getY(), (int) Misc.Background.TILE_WIDTH, (int) Misc.Background.TILE_HEIGHT, null);
 		
 	}
 	
@@ -80,6 +80,18 @@ public class MainCharacter extends Entity {
 		if(input.getInput(InputHandler.KEY_RIGHT) == 1) {
 			position.setLocation(position.getX() + (int) (PLAYER_SPEED * delta), position.getY());
 		}	
+	}
+
+	@Override
+	public void update() {}
+
+	@Override
+	public void destroy() {}
+
+	@Override
+	public Entity newInstance() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
