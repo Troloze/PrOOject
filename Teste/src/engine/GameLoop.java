@@ -6,9 +6,9 @@ public final class GameLoop {
 	
 	private static GameLoop instance;
 	
+	private InputHandler input;
 	private Thread gameThread;
 	private Game game;
-	private InputHandler input;
 	
 	private GameLoop() {
 		input = InputHandler.getInstance();
@@ -24,25 +24,27 @@ public final class GameLoop {
 		if (instance == null) {
 			instance = new GameLoop();
 		}
+		
 		return instance;
 	}
 	
 	public void loop() {
-		double nanoSeconds = 1000000000.0;
 		int fps = MyPanel.getFPS();
+		
+		double nanoSeconds = 1000000000.0;
 		double drawInterval = nanoSeconds/fps;
-		double delta = 0;
 		double lastTime = System.nanoTime();
 		double currentTime;
-		double a = lastTime	;
+		double delta = 0;
+		
+		double a = lastTime;
 		double b;
+		
 		while(gameThread != null) {
 			currentTime = System.nanoTime();
-			
 			delta += (currentTime - lastTime) / drawInterval;
-			
 			lastTime = currentTime;
-	
+			
 			if(delta >= 1) {
 				b = (currentTime - a) / nanoSeconds;
 				a = currentTime;

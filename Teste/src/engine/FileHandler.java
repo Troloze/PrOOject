@@ -1,14 +1,13 @@
 package engine;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
 public class FileHandler {
 	private static FileHandler instance;
-	MyFileReader fileReader;
-	MyFileWriter fileWriter;
+	private MyFileReader fileReader;
+	private MyFileWriter fileWriter;
 	
 	private FileHandler() {
 		fileReader = MyFileReader.getInstance();
@@ -25,15 +24,17 @@ public class FileHandler {
 	
 	public void writeFile(String directory, String text) {
 		PrintWriter myFile = fileWriter.openFile(directory);
+		
 		fileWriter.writeFile(myFile, text);
 	}
 	
 	public String readFile(String directory) {
 		BufferedReader myFile = fileReader.openFile(directory);
+		
 		return fileReader.toString(myFile);
 	}
 	
-	public Image openImage(String directory) {
+	public Image openImage(String directory) {	
 		return fileReader.loadImage(directory);
 	}
 }

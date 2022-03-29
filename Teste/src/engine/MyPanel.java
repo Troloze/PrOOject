@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import game.Game;
-import game.MainCharacter;
 
 public final class MyPanel extends JPanel implements Runnable {
 	
@@ -34,7 +33,6 @@ public final class MyPanel extends JPanel implements Runnable {
 		game = Game.getInstance();
 		
 		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
-		this.setBackground(Color.blue);
 		this.setDoubleBuffered(true);
 		this.setLayout(null);
 		this.setOpaque(true);
@@ -47,6 +45,7 @@ public final class MyPanel extends JPanel implements Runnable {
 		if (instance == null) {
 			instance = new MyPanel();
 		}
+		
 		return instance;
 	}
 
@@ -60,13 +59,13 @@ public final class MyPanel extends JPanel implements Runnable {
 	}
 	
 	public void paint(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		
 		g.setColor(new Color(0x1C, 0x1C, 0x27));
 		g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-		
-		Graphics2D g2 = (Graphics2D) g;
 		
 		game.gamePaint(g2);
 		
 		g.dispose();
-	}	
+	}
 }

@@ -2,25 +2,22 @@ package engine;
 
 import java.io.File;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class MyFileReader {
+	
 	private static MyFileReader instance;
 	
 	private MyFileReader() {
 		
 	}
-	
-	// Singleton;
 	
 	public static MyFileReader getInstance() {
 		if(instance == null) {
@@ -30,10 +27,9 @@ public class MyFileReader {
 		return instance;
 	}
 	
-	// Methods;
-	
 	public Image loadImage(String directory) {
 		Image image = new ImageIcon(directory).getImage();
+		
 		return image;
 	}
 	

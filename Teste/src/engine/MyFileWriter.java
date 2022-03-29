@@ -28,6 +28,7 @@ public class MyFileWriter {
 	}
 	
 	public PrintWriter openFile(String directory) {
+		
 		File openFile = new File(directory);
 		PrintWriter file;
 		

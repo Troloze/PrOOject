@@ -9,11 +9,12 @@ public final class MyFrame extends JFrame {
 	MyPanel gamePanel;
 	
 	public MyFrame() {
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setResizable(false);
-		this.setTitle("PrOOject");
 		
 		gamePanel = MyPanel.getInstance();
+		
+		this.setTitle("PrOOject");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setResizable(false);
 		this.add(gamePanel);
 		
 		this.pack();

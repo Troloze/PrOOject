@@ -1,5 +1,6 @@
 package game;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import java.util.ArrayList;
@@ -11,9 +12,16 @@ public class Game {
 	private MainCharacter mainCharacter;
 	
 	private List<Entity> entities;
+	private List<MenuElement> menuElement;
 	
 	private Game() {
+		menuElement = new ArrayList<>();
 		entities = new ArrayList<>();
+		
+		menuElement.add(MenuElement.getStartButton());
+		menuElement.add(MenuElement.getRankButton());
+		menuElement.add(MenuElement.getExitButton());
+		
 		mainCharacter = MainCharacter.getInstance();
 	}
 	
@@ -32,5 +40,9 @@ public class Game {
 	
 	public void gamePaint(Graphics2D g2) {
 		mainCharacter.draw(g2);
+		
+		g2.setColor(Color.red);
+		
+		menuElement.forEach(ml -> {ml.draw(g2);});
 	}
 }
