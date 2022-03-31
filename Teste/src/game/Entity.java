@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 
 public abstract class Entity {
 	public Point2D position;
+	public double zPosition;
 	
 	
 	public abstract Entity newInstance();

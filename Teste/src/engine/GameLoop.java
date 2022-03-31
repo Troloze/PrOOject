@@ -35,24 +35,27 @@ public final class GameLoop {
 		double lastTime = System.nanoTime();
 		double currentTime;
 		double a = lastTime	;
-		double b;
+		double b, c;
 		while(gameThread != null) {
 			currentTime = System.nanoTime();
 			
 			delta += (currentTime - lastTime) / drawInterval;
 			
-			lastTime = currentTime;
+			
 	
 			if(delta >= 1) {
 				b = (currentTime - a) / nanoSeconds;
-				a = currentTime;
+				
 				
 				input.updateInputStatus();
 				game.gameUpdate(b);
 				MyPanel.getInstance().repaint();
-				
+				a = currentTime;
 				delta--;
 			}
+			
+			
+			lastTime = currentTime;
 		}
 	}
 }

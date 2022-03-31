@@ -16,8 +16,8 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	private static MyPanel instance;
 	
-	private static final int PANEL_WIDTH = 1280;
-	private static final int PANEL_HEIGHT = 960;
+	public static final int PANEL_WIDTH = 1280;
+	public static final int PANEL_HEIGHT = 960;
 	private static final int FPS = 60;
 	
 	public static int getFPS() {
@@ -27,11 +27,13 @@ public final class MyPanel extends JPanel implements Runnable {
 	private InputHandler input;
 	private GameLoop gameLoop;
 	private Game game;
+	private Renderer renderer;
 	
 	private MyPanel() {
 		gameLoop = GameLoop.getInstance();
 		input = InputHandler.getInstance();
 		game = Game.getInstance();
+		renderer = Renderer.getInstance();
 		
 		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 		this.setBackground(Color.blue);
@@ -66,7 +68,8 @@ public final class MyPanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D) g;
 		
 		game.gamePaint(g2);
-		
+		renderer.render(g2);
+				
 		g.dispose();
 	}	
 }

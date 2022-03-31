@@ -31,6 +31,8 @@ public class Game {
 	}
 	
 	public void gamePaint(Graphics2D g2) {
+		long c = System.nanoTime();
 		mainCharacter.draw(g2);
+		System.out.println(((System.nanoTime() - c)/1000000000.0));
 	}
 }
