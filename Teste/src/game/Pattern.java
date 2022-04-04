@@ -2,7 +2,9 @@ package game;
 
 public abstract class Pattern {
 
+	@SuppressWarnings("unused")
 	private double setTime[];
+	@SuppressWarnings("unused")
 	private Instruction set[];
 	private Instruction onStart, onEnd, onDeath;
 	

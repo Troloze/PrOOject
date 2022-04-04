@@ -55,8 +55,8 @@ public final class Camera {
 	}
 	
 	public void reset() {
-		x = 0.0;
-		y = 0.0;
+		x = 0;
+		y = 0;
 		z = 10.0;
 	}
 }

@@ -35,7 +35,7 @@ public final class GameLoop {
 		double lastTime = System.nanoTime();
 		double currentTime;
 		double a = lastTime	;
-		double b, c;
+		double b;
 		while(gameThread != null) {
 			currentTime = System.nanoTime();
 			

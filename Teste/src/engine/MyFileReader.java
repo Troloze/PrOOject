@@ -2,12 +2,10 @@ package engine;
 
 import java.io.File;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import java.io.FileNotFoundException;
@@ -35,7 +33,7 @@ public class MyFileReader {
 	public Image loadImage(String directory) {
 		Image image = new ImageIcon(directory).getImage();
 		return image;
-	}
+	}	
 	
 	public String toString(BufferedReader fileToRead) {
 		

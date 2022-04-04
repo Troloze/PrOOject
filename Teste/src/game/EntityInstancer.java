@@ -2,11 +2,15 @@ package game;
 
 public final class EntityInstancer {
 	
-	public static final int ENT_REGULAR = 0;
+	public static final int ENT_PLAYER = 0;
+	public static final int ENT_TEST = -1;
 	
 	private static EntityInstancer instance;
+	private static Game game;
 		
-	private EntityInstancer () {}
+	private EntityInstancer () {
+		game = Game.getInstance();
+	}
 	
 	public static EntityInstancer getInstance() {
 		if (instance == null) {
@@ -15,10 +19,15 @@ public final class EntityInstancer {
 		return instance;
 	}
 	
-	public static void instance(int type, InstanceParams params) {
+	public void instance(int type, InstanceParams params) {
+		Entity ent = null;
 		switch (type) {
-			case ENT_REGULAR:
-			
+			case ENT_PLAYER:
+				ent = Player.newInstance();
+			break;
+			case ENT_TEST:
+				ent = TestEntity.newInstance(params.rotation, params.position, params.scale);
 		}
+		game.addEntity(ent);
 	}
 }

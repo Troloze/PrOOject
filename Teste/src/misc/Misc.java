@@ -562,6 +562,7 @@ public final class Misc {
 		// Cosseno Rápido, sem nenhuma divisão, ou operação demorada.
 		public static double fcosDeg(double angle) {
 			double t, a, b;
+			if (angle < 0) angle = 180 - angle;
 			int k, n = (int) (angle * overDeg);
 			angle = angle - 360 * n;
 			k = (int) (4 * angle);

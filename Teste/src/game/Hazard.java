@@ -100,7 +100,8 @@ public abstract class Hazard extends Entity{
 	/**
 	 * Lembrar de não permitir que atualize se não estiver vivo.
 	 */
-	public void update() {
+	@Override
+	public void update(double delta) {
 		if (!alive) return;
 		double currentTime = System.nanoTime()/Misc.Other.nanoSecond;
 		updateStats();

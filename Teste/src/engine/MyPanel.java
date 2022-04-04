@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
 import game.Game;
-import game.MainCharacter;
 
 public final class MyPanel extends JPanel implements Runnable {
 	
@@ -16,8 +16,8 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	private static MyPanel instance;
 	
-	public static final int PANEL_WIDTH = 1280;
-	public static final int PANEL_HEIGHT = 960;
+	public static final int PANEL_WIDTH = 960;
+	public static final int PANEL_HEIGHT = 720;
 	private static final int FPS = 60;
 	
 	public static int getFPS() {
@@ -63,13 +63,18 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	public void paint(Graphics g) {
 		g.setColor(new Color(0x1C, 0x1C, 0x27));
+		//g.setColor(Color.black);
 		g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
 		
-		Graphics2D g2 = (Graphics2D) g;
+		//long c = System.nanoTime();
 		
-		game.gamePaint(g2);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		renderer.render(g2);
 				
+		//System.out.println((System.nanoTime() - c)/1000000000.0);
+		
 		g.dispose();
 	}	
 }

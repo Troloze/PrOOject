@@ -1,12 +1,10 @@
 package game;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
 public class InstanceParams {
-	public Point2D positionDouble = null;
-	public Point positionInt = null;
+	public Point2D position = null;
 	public Point2D scale = null;
 	
 	public double rotation = 0.0;
