@@ -9,7 +9,7 @@ public class Player extends Entity{
 
 	public Sprite sprite;
 	public static final Point2D DEFAULT_POS = new Point2D.Double(0, 0);
-	public static final int PLAYER_SPEED = 200;
+	public static final int PLAYER_SPEED = 400;
 	private static InputHandler input;
 	
 	public Point2D scale;
@@ -24,8 +24,8 @@ public class Player extends Entity{
 		if (input == null) input = InputHandler.getInstance();
 		this.sprite = new Sprite(this);
 		scale = new Point2D.Double(50.0, 43.0);
-		
-		sprite.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_ORANGE1);
+		this.zPosition = 10.0;
+		sprite.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_LIGHT1);
 		
 		
 		
@@ -34,21 +34,29 @@ public class Player extends Entity{
 
 	@Override
 	public void update(double delta) {		
+		double rate = 1;
+		if (input.getInput(InputHandler.KEY_FOCUS) == 1) {
+			rate = 0.4;
+		}
+		
 		if(input.getInput(InputHandler.KEY_UP) == 1) {
-			position.setLocation(position.getX(), position.getY() - (PLAYER_SPEED * delta));
+			position.setLocation(position.getX(), position.getY() - (PLAYER_SPEED * delta * rate));
 		}
 		
 		if(input.getInput(InputHandler.KEY_DOWN) == 1) {
-			position.setLocation(position.getX(), position.getY() + (PLAYER_SPEED * delta));
+			position.setLocation(position.getX(), position.getY() + (PLAYER_SPEED * delta * rate));
 		}
 		
 		if(input.getInput(InputHandler.KEY_LEFT) == 1) {
-			position.setLocation(position.getX() - (PLAYER_SPEED * delta), position.getY());
+			position.setLocation(position.getX() - (PLAYER_SPEED * delta * rate), position.getY());
 		}
 		
 		if(input.getInput(InputHandler.KEY_RIGHT) == 1) {
-			position.setLocation(position.getX() + (PLAYER_SPEED * delta), position.getY());
+			position.setLocation(position.getX() + (PLAYER_SPEED * delta * rate), position.getY());
 		}
+		
+		
+		
 	}
 
 	@Override
@@ -72,7 +80,7 @@ public class Player extends Entity{
 	@Override
 	public double getZPos() {
 		// TODO Auto-generated method stub
-		return 10.0;
+		return zPosition;
 	}
 
 	

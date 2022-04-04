@@ -101,6 +101,10 @@ public final class Misc {
 			return (int) (a - t * (a - b));
 		}
 		
+		public static double clamp(double a, double max, double min) {
+			return (a > max) ? max : ((a < min) ? min : a);
+		}
+		
 		public static double smoothStart2(double t) {
 			return t * t;
 		}
@@ -193,8 +197,8 @@ public final class Misc {
 		public static final double overDeg = 1.0/360.0;
 		public static final double overRad = 1.0/(2.0 * Math.PI);
 		
-		// Valores precomputados dos cossenos de todos os ângulos entre 0 e 360 com fator de .25
-		// Altamente recomendado não expandir essa tabela, pois ela possui 361 linhas, com 1441 elementos.
+		// Valores precomputados dos cossenos de todos os ï¿½ngulos entre 0 e 360 com fator de .25
+		// Altamente recomendado nï¿½o expandir essa tabela, pois ela possui 361 linhas, com 1441 elementos.
 		public static final double cosTable[] = {
 				1.0000000000, 0.9999904807, 0.9999619231, 0.9999143276, 
 				0.9998476952, 0.9997620271, 0.9996573250, 0.9995335908, 
@@ -559,7 +563,7 @@ public final class Misc {
 				1.0000000000
 		};
 		
-		// Cosseno Rápido, sem nenhuma divisão, ou operação demorada.
+		// Cosseno Rï¿½pido, sem nenhuma divisï¿½o, ou operaï¿½ï¿½o demorada.
 		public static double fcosDeg(double angle) {
 			double t, a, b;
 			if (angle < 0) angle = 180 - angle;

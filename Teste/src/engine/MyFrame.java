@@ -12,7 +12,7 @@ public final class MyFrame extends JFrame {
 		System.getProperties().setProperty("sun.java2d.opengl", "true");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
-		this.setTitle("PrOOject");
+		this.setTitle(" ");
 		
 		gamePanel = MyPanel.getInstance();
 		this.add(gamePanel);

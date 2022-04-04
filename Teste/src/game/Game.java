@@ -32,10 +32,10 @@ public final class Game {
 			InstanceParams iP = new InstanceParams();
 			eI.instance(EntityInstancer.ENT_PLAYER, iP);
 			test = false;
-			for (int i = 0; i < 2300; i++) {
-				iP.rotation = Math.random() * 360;
+			for (int i = 0; i < 300; i++) {
+				iP.rotation = 0;
 				iP.position = new Point2D.Double(-300 + Math.random() * 600, -200 + Math.random() * 400);
-				iP.scale = new Point2D.Double(50 + Math.random() * 100, 50 + Math.random() * 100);
+				iP.scale = new Point2D.Double(50 , 43);
 
 				eI.instance(EntityInstancer.ENT_TEST, iP);
 			}

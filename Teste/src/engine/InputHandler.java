@@ -118,7 +118,7 @@ public final class InputHandler extends JComponent{
 		inputStatus.replace(key, (isDown) ? ((value == 0 || value == 1) ? 1 : 0) : ((value == 0 || value == 1) ? 2 : 3));
 	}
 	
-	public final class KeyboardHandler implements KeyListener{
+	public static final class KeyboardHandler implements KeyListener{
 
 		private static InputHandler.KeyboardHandler instance;
 		private static InputHandler inputHandler;
@@ -155,7 +155,7 @@ public final class InputHandler extends JComponent{
 		public static KeyboardHandler getInstance() {
 			if (instance == null) {
 				inputHandler = InputHandler.getInstance();
-				instance = inputHandler.new KeyboardHandler();
+				instance = new KeyboardHandler();
 			}
 			return instance;
 		}

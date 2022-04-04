@@ -3,12 +3,11 @@ package game;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import engine.ImageBufferHandler;
 import engine.ImageData;
-import engine.MultiSpriteHolder;
 import engine.MyPanel;
+import engine.RenderSettings;
 import engine.Renderer;
 import engine.SpriteHolder;
 import misc.Misc;
@@ -23,7 +22,14 @@ public final class Sprite {
 	private Point2D screenScale;
 	private Point2D position;
 	private Point2D scale;
+	
+	private Point2D offsetPosition;
+	private Point2D offsetScale;
+	private double offsetRotation;
+	private double offsetZPosition;
+	
 	private float alpha;
+	private float alphaFade;
 	private double zPosition;
 	private double currentZPosition;
 	private double rotation;
@@ -46,6 +52,10 @@ public final class Sprite {
 		this.currentZPosition = 10.0;
 		this.rotation = 0.0;
 		this.body = body;
+		this.offsetPosition = new Point2D.Double();
+		this.offsetScale = new Point2D.Double();
+		this.offsetRotation = 0;
+		this.offsetZPosition = 0;
 		renderer.add(this);
 	}
 	
@@ -53,6 +63,13 @@ public final class Sprite {
 		//System.out.println(screenPosition);
 		update();
 		return sprite;
+	}
+	
+	public void setOffset(Point2D pos, Point2D scl, double rot, double z) {
+		offsetZPosition = z;
+		offsetRotation = rot;
+		offsetScale.setLocation(scl);
+		offsetPosition.setLocation(pos);
 	}
 	
 	public void set(int type, int color) {
@@ -69,8 +86,8 @@ public final class Sprite {
 		sprite.color = color;
 	}
 	
-	
 	public void update() {
+		sprite.visible = true;
 		updateBody();
 		updateZ();
 		updatePositionTransform();
@@ -79,24 +96,14 @@ public final class Sprite {
 		updateVisible();
 	}
 	
-		
 	private void updateBody() {
 		if (body == null) return;
-		if (body instanceof MultiSpriteHolder) {
-			MultiSpriteHolder mSH = (MultiSpriteHolder) body;
-			double xPos, yPos;
-			xPos = mSH.positionOffset(this).getX() * body.getScale().getX() * Misc.MyMath.fcosDeg(body.getRotation());
-			yPos = mSH.positionOffset(this).getY() * body.getScale().getY() * Misc.MyMath.fsinDeg(body.getRotation());
-			position = new Point2D.Double(body.getPosition().getX() + xPos, body.getPosition().getY() + yPos);
-			rotation = body.getRotation() + mSH.rotationOffset(this);
-			scale = new Point2D.Double(body.getScale().getX() + mSH.scaleOffset(this).getX(), body.getScale().getY() + mSH.scaleOffset(this).getY());
-		} 
-		else {
-			scale = body.getScale();
-			position = body.getPosition();
-			rotation = body.getRotation();
-		}
-		zPosition = body.getZPos();
+		Point2D bodyPos = body.getPosition();
+		Point2D bodyScl = body.getScale();
+		scale.setLocation(bodyScl.getX() + offsetScale.getX(), bodyScl.getY() + offsetScale.getY());
+		position.setLocation(bodyPos.getX() + offsetPosition.getX(), bodyPos.getY() + offsetPosition.getY());
+		rotation = body.getRotation() + offsetRotation;
+		zPosition = body.getZPos() + offsetZPosition;
 	}
 	
 	private void updateZ() {
@@ -111,42 +118,57 @@ public final class Sprite {
 		double camPosX = cam.getX();
 		double camPosY = cam.getY();
 		double camPosZ = cam.getZ();
-		double zRate = camPosZ/zPosition;
+		double zRate = (camPosZ - (40 - 40 * RenderSettings.PANEL_RATE));
+		if ((camPosZ - zPosition) > 1) {
+			zRate /= (camPosZ - zPosition);
+		}
+		else {
+			zRate /= 1;
+			sprite.visible = false;
+		}
+		
+		
+		alphaFade = (float) Misc.Transform.clamp((camPosZ - zPosition) - 1, 1.0, 0.0);
+		
+		
 		
 		screenScale.setLocation(scale.getX() * zRate, scale.getY() * zRate);
 		screenPosition.setLocation(
 			(position.getX() - camPosX) * zRate + screenSize.getX()/2.0,
 			(position.getY() - camPosY) * zRate + screenSize.getY()/2.0
 		);
+
 	}
 	
 	private void updateData() {
-		sprite.alpha = alpha;
+		sprite.alpha = alpha * alphaFade;
 		if (alpha <= 0f) sprite.visible = false;
 		ImageBufferHandler.getImageData(sprite, sprite.type, screenScale.getX());
 	}
 	
 	private void updateTransform() {
+		if (!sprite.visible) return;
 		double cos = Misc.MyMath.fcosDeg(rotation);
 		double sin = Misc.MyMath.fsinDeg(rotation);
 
-		double xScale = this.screenScale.getX() * this.sprite.invScaleRates.getX();
-		double yScale = this.screenScale.getY() * this.sprite.invScaleRates.getY();
+		double xScale = screenScale.getX() * sprite.invScaleRates.getX();
+		double yScale = screenScale.getY() * sprite.invScaleRates.getY();
 		
-		double xOffset = this.sprite.offset.getX() * this.sprite.size.getX();
-		double yOffset = this.sprite.offset.getY() * this.sprite.size.getY();
+		double xOffset = sprite.offset.getX() * sprite.size.getX();
+		double yOffset = sprite.offset.getY() * sprite.size.getY();
 		
-		this.sprite.at = new AffineTransform(
+		sprite.at = new AffineTransform(
 				xScale * cos,
 				xScale * sin,
 			   -yScale * sin,
 			   	yScale * cos,
-			   	xScale * cos * xOffset - yScale * sin * yOffset + this.screenPosition.getX(),
-			   	xScale * sin * xOffset + yScale * cos * yOffset + this.screenPosition.getY() 	
+			   	xScale * cos * xOffset - yScale * sin * yOffset + screenPosition.getX(),
+			   	xScale * sin * xOffset + yScale * cos * yOffset + screenPosition.getY() 	
 		);
 	}
 	
 	private void updateVisible() {
+		if (!sprite.visible)return; 
 		boolean visible = true;
 		
 		double xPos = screenPosition.getX();
@@ -157,7 +179,7 @@ public final class Sprite {
 		double x1 = (sprite.offset.getX() - 1) * screenScale.getX();
 		double y1 = (sprite.offset.getY() - 1) * screenScale.getY();
 		
-		// Caso a posição na tela esteja menor que 0, ou maior q a dimensão, não é visível
+		// Caso a posiï¿½ï¿½o na tela esteja menor que 0, ou maior q a dimensï¿½o, nï¿½o ï¿½ visï¿½vel
 		boolean cond = (xPos + x0 <= 0) || (yPos + y0 <= 0) || 
 				(xPos + x1 > screenSize.getX()) || (yPos + y1 > screenSize.getY());
 		
