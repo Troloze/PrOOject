@@ -2,6 +2,10 @@ package engine;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import game.Rank;
+
 import java.io.OutputStreamWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,8 +26,11 @@ public class MyFileWriter {
 		return instance;
 	}
 	
-	public void writeFile(PrintWriter file, String text) {
-		file.format(text);
+	public void rewriteFile(PrintWriter file, ArrayList<Rank> rank) {
+		for(int i = 0; i < rank.size(); i++) {
+			file.println(rank.get(i).toString());
+		}
+		
 		file.close();
 	}
 	

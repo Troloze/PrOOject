@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
@@ -15,8 +16,8 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	private static MyPanel instance;
 	
-	private static final int PANEL_WIDTH = 1280;
-	private static final int PANEL_HEIGHT = 960;
+	public static final int PANEL_WIDTH = (int) (1280.0 * 0.75);
+	public static final int PANEL_HEIGHT = (int) (960 * 0.75);
 	private static final int FPS = 60;
 	
 	public static int getFPS() {
@@ -60,6 +61,11 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
+		
+		RenderingHints rh = new RenderingHints(
+				RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	    g2.setRenderingHints(rh);
 		
 		g.setColor(new Color(0x1C, 0x1C, 0x27));
 		g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);

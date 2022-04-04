@@ -1,8 +1,12 @@
 package engine;
 
+import java.awt.Font;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import game.Rank;
 
 public class FileHandler {
 	private static FileHandler instance;
@@ -22,19 +26,21 @@ public class FileHandler {
 		return instance;
 	}
 	
-	public void writeFile(String directory, String text) {
+	public void rewriteFile(String directory, ArrayList<Rank> rank) {
 		PrintWriter myFile = fileWriter.openFile(directory);
-		
-		fileWriter.writeFile(myFile, text);
+		fileWriter.rewriteFile(myFile, rank);
 	}
 	
-	public String readFile(String directory) {
+	public ArrayList<String> readFile(String directory) {
 		BufferedReader myFile = fileReader.openFile(directory);
-		
-		return fileReader.toString(myFile);
+		return fileReader.readFile(myFile);
 	}
 	
 	public Image openImage(String directory) {	
 		return fileReader.loadImage(directory);
+	}
+	
+	public Font openFont(String directory) {
+		return fileReader.loadFont(directory);
 	}
 }

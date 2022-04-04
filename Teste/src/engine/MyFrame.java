@@ -1,5 +1,8 @@
 package engine;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import javax.swing.JFrame;
 
 public final class MyFrame extends JFrame {

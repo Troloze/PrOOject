@@ -1,27 +1,19 @@
 package game;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
-import java.util.ArrayList;
-import java.util.List;
+import engine.InputHandler;
 
 public class Game {
 	private static Game instance;
 	
+	private InputHandler input;
 	private MainCharacter mainCharacter;
-	
-	private List<Entity> entities;
-	private List<MenuElement> menuElement;
+	private GameStateHandler stateHandler;
 	
 	private Game() {
-		menuElement = new ArrayList<>();
-		entities = new ArrayList<>();
-		
-		menuElement.add(MenuElement.getStartButton());
-		menuElement.add(MenuElement.getRankButton());
-		menuElement.add(MenuElement.getExitButton());
-		
+		input = InputHandler.getInstance();
+		stateHandler = GameStateHandler.getInstance();
 		mainCharacter = MainCharacter.getInstance();
 	}
 	
@@ -34,15 +26,23 @@ public class Game {
 	}
 	
 	public void gameUpdate(double delta) {
-		mainCharacter.move(delta);
-		entities.forEach(ent -> {ent.update();});
+		if(stateHandler.getState() == GameStateHandler.STATE_PLAYING) {
+			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_PAUSED);
+			mainCharacter.move(delta);
+		} else {
+			stateHandler.updateState();
+		}
 	}
 	
 	public void gamePaint(Graphics2D g2) {
-		mainCharacter.draw(g2);
+		if(stateHandler.getState() == GameStateHandler.STATE_PLAYING || stateHandler.getState() == GameStateHandler.STATE_PAUSED) {
+			mainCharacter.draw(g2);
+		}
 		
-		g2.setColor(Color.red);
+		if(stateHandler.getState() != GameStateHandler.STATE_PLAYING) {
+			stateHandler.draw(g2);
+		}
 		
-		menuElement.forEach(ml -> {ml.draw(g2);});
+		g2.dispose();
 	}
 }

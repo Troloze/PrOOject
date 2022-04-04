@@ -3,10 +3,12 @@ package game;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import engine.FileHandler;
 import engine.InputHandler;
+import engine.MyPanel;
 import misc.Misc;
 
 public class MainCharacter extends Entity {
@@ -40,7 +42,7 @@ public class MainCharacter extends Entity {
 	
 	public void defaultPlayerStatus() {
 		
-		position.setLocation(300, 300);
+		position.setLocation(MyPanel.PANEL_WIDTH/2, MyPanel.PANEL_HEIGHT/2);
 		
 	}
 	
@@ -59,6 +61,27 @@ public class MainCharacter extends Entity {
 	public void draw(Graphics2D g2) {
 		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHints(rh);
+		Point2D position2 = new Point2D.Double();
+		Point2D scale = new Point2D.Double();
+		double v;
+		Point2D rotation = new Point2D.Double();
+		
+		/*for (int i = 0; i < 10000; i++) {
+			position2.setLocation(Math.random() * 900, Math.random() * 600);
+			scale.setLocation(15.0/1500.0 * (1 + Math.random()), 13.0/1301.0 * (1 + Math.random()));
+			v = Math.random() * 2 * Math.PI;
+			rotation.setLocation(Math.cos(v), Math.sin(v));
+			AffineTransform at = new AffineTransform(
+					scale.getX() * rotation.getX(),
+					scale.getX() * rotation.getY(),
+					scale.getY() * (-rotation.getY()),
+					scale.getY() * rotation.getX(),
+					scale.getX() * rotation.getX() * 750.0 - scale.getY() * rotation.getY() * 1301.0 * 2 / 3.0 + position2.getX(),
+					scale.getX() * rotation.getY() * 750.0 + scale.getY() * rotation.getX() * 1301.0 * 2 / 3.0 + position2.getY());
+			
+			g2.drawImage(sprite, at, null);
+				
+		}/**/
 		g2.drawImage(sprite, (int) position.getX(), (int) position.getY(), (int) Misc.Background.TILE_WIDTH, (int) Misc.Background.TILE_HEIGHT, null);
 		
 	}
