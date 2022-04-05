@@ -1,7 +1,9 @@
-package game;
+package misc;
 
 import java.awt.geom.Point2D;
 import java.util.Map;
+
+import game.Pattern;
 
 public class InstanceParams {
 	public Point2D position = null;

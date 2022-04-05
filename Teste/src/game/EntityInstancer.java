@@ -1,5 +1,7 @@
 package game;
 
+import misc.InstanceParams;
+
 public final class EntityInstancer {
 	
 	public static final int ENT_PLAYER = 0;

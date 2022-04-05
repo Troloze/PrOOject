@@ -5,12 +5,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import engine.ImageBufferHandler;
-import engine.ImageData;
 import engine.MyPanel;
 import engine.RenderSettings;
 import engine.Renderer;
 import engine.SpriteHolder;
+import misc.ImageData;
 import misc.Misc;
+import misc.Transform;
 
 public final class Sprite {
 	
@@ -34,11 +35,16 @@ public final class Sprite {
 	private double currentZPosition;
 	private double rotation;
 	private SpriteHolder body;
+	
+	private boolean destroyed = false;
+	
+	public boolean isDestroyed() {
+		return destroyed;
+	}
 
 	public void setAlpha(float alpha) {
 		this.alpha = alpha;
 	}
-	
 	
 	public Sprite(SpriteHolder body) {
 		if (renderer == null) renderer = Renderer.getInstance();
@@ -56,20 +62,32 @@ public final class Sprite {
 		this.offsetScale = new Point2D.Double();
 		this.offsetRotation = 0;
 		this.offsetZPosition = 0;
+		this.destroyed = false;
 		renderer.add(this);
 	}
 	
 	public ImageData getRenderInfo() {
 		//System.out.println(screenPosition);
+		if (destroyed) return null;
 		update();
 		return sprite;
 	}
 	
-	public void setOffset(Point2D pos, Point2D scl, double rot, double z) {
-		offsetZPosition = z;
-		offsetRotation = rot;
-		offsetScale.setLocation(scl);
-		offsetPosition.setLocation(pos);
+	public void setOffset(Transform transform) {
+		if (transform == null) {
+			offsetZPosition = 0.0;
+			offsetRotation = 0.0;
+			offsetScale.setLocation(0, 0);
+			offsetPosition.setLocation(0, 0);
+			System.out.println("NULL SPRITE OFFSET TRANSFORM");
+			return;
+		}
+		offsetZPosition = transform.zPosition;
+		offsetRotation = transform.rotation;
+		if (transform.scale != null) offsetScale.setLocation(transform.scale);
+		offsetScale.setLocation(0, 0);
+		if (transform.position != null) offsetPosition.setLocation(transform.position);
+		offsetPosition.setLocation(0, 0);
 	}
 	
 	public void set(int type, int color) {
@@ -79,7 +97,6 @@ public final class Sprite {
 	
 	public void changeSprite(int type) {
 		sprite.type = type;
-		
 	}
 	
 	public void changeColor(int color) {
@@ -98,12 +115,13 @@ public final class Sprite {
 	
 	private void updateBody() {
 		if (body == null) return;
-		Point2D bodyPos = body.getPosition();
-		Point2D bodyScl = body.getScale();
-		scale.setLocation(bodyScl.getX() + offsetScale.getX(), bodyScl.getY() + offsetScale.getY());
-		position.setLocation(bodyPos.getX() + offsetPosition.getX(), bodyPos.getY() + offsetPosition.getY());
-		rotation = body.getRotation() + offsetRotation;
-		zPosition = body.getZPos() + offsetZPosition;
+		Transform transform = body.getTransform();
+		if (transform.scale != null) scale.setLocation(transform.scale.getX() + offsetScale.getX(), transform.scale.getY() + offsetScale.getY());
+		else scale.setLocation(offsetScale);
+		if (transform.position != null) position.setLocation(transform.position.getX() + offsetPosition.getX(), transform.position.getY() + offsetPosition.getY());
+		else position.setLocation(offsetPosition);
+		rotation = transform.rotation + offsetRotation;
+		zPosition = transform.zPosition + offsetZPosition;
 	}
 	
 	private void updateZ() {
@@ -193,5 +211,10 @@ public final class Sprite {
 		
 	public double getCurrentZPosition() {
 		return currentZPosition;
+	}
+	
+	public void destroy() {
+		destroyed = true;
+		renderer.destroy(this);
 	}
 }

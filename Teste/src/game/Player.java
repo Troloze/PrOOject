@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 
 import engine.ImageBufferHandler;
 import engine.InputHandler;
+import misc.Transform;
 
 public class Player extends Entity{
 
@@ -12,47 +13,45 @@ public class Player extends Entity{
 	public static final int PLAYER_SPEED = 400;
 	private static InputHandler input;
 	
-	public Point2D scale;
-	
 	public static Entity newInstance() {
 		
 		return new Player();
 	}
 	
 	private Player() {
-		this.position = new Point2D.Double();
+		this.transform = new Transform(null, new Point2D.Double(50.0, 43.0), 0 , 10.0);
 		if (input == null) input = InputHandler.getInstance();
 		this.sprite = new Sprite(this);
-		scale = new Point2D.Double(50.0, 43.0);
-		this.zPosition = 10.0;
+
 		sprite.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_LIGHT1);
 		
+		this.transform.position.setLocation(DEFAULT_POS.getX(), DEFAULT_POS.getY());
 		
-		
-		this.position.setLocation(DEFAULT_POS.getX(), DEFAULT_POS.getY());
+		this.destroyed = false;
 	}
 
 	@Override
 	public void update(double delta) {		
+		if (destroyed) return;
 		double rate = 1;
 		if (input.getInput(InputHandler.KEY_FOCUS) == 1) {
 			rate = 0.4;
 		}
 		
 		if(input.getInput(InputHandler.KEY_UP) == 1) {
-			position.setLocation(position.getX(), position.getY() - (PLAYER_SPEED * delta * rate));
+			transform.position.setLocation(transform.position.getX(), transform.position.getY() - (PLAYER_SPEED * delta * rate));
 		}
 		
 		if(input.getInput(InputHandler.KEY_DOWN) == 1) {
-			position.setLocation(position.getX(), position.getY() + (PLAYER_SPEED * delta * rate));
+			transform.position.setLocation(transform.position.getX(), transform.position.getY() + (PLAYER_SPEED * delta * rate));
 		}
 		
 		if(input.getInput(InputHandler.KEY_LEFT) == 1) {
-			position.setLocation(position.getX() - (PLAYER_SPEED * delta * rate), position.getY());
+			transform.position.setLocation(transform.position.getX() - (PLAYER_SPEED * delta * rate), transform.position.getY());
 		}
 		
 		if(input.getInput(InputHandler.KEY_RIGHT) == 1) {
-			position.setLocation(position.getX() + (PLAYER_SPEED * delta * rate), position.getY());
+			transform.position.setLocation(transform.position.getX() + (PLAYER_SPEED * delta * rate), transform.position.getY());
 		}
 		
 		
@@ -60,30 +59,14 @@ public class Player extends Entity{
 	}
 
 	@Override
-	public Point2D getScale() {
-		return scale;
+	public Transform getTransform() {
+		return transform;
 	}
 
 	@Override
-	public Point2D getPosition() {
-		return position;
+	public void destroy() {
+		if (!sprite.isDestroyed()) sprite.destroy();
+		sprite = null;
+		destroyed = true;
 	}
-
-	@Override
-	public double getRotation() {
-		return 0.0;
-	}
-	
-	@Override
-	public void destroy() {}
-
-	@Override
-	public double getZPos() {
-		// TODO Auto-generated method stub
-		return zPosition;
-	}
-
-	
-	
-
 }

@@ -4,8 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
+
+import misc.ImageData;
 
 public final class ImageBufferHandler {
 	private static BufferedImage buffer[];

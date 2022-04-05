@@ -9,58 +9,89 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import game.Sprite;
+import misc.ImageData;
 
 public final class Renderer {
 
 	private static Renderer instance;
-	private static List<Sprite> nextToQueue = null;
-	private static List<Sprite> queueUpdate = null;
+	private static List<Sprite> addQueue = null;
+	private static List<Sprite> updateQueue = null;
+	private static List<Sprite> destroyQueue = null;
 	private static PriorityQueue<Sprite> gameBuffer = null;
 	private static PriorityQueue<Sprite> gameBuffer2 = null;
 	
 	private static boolean renderLock = false;
 	
 	private Renderer() {
-		nextToQueue = new ArrayList<>();
-		queueUpdate = new ArrayList<>();
+		addQueue = new ArrayList<>();
+		updateQueue = new ArrayList<>();
+		destroyQueue = new ArrayList<>();
 		gameBuffer = new PriorityQueue<>(100, new bufferComparator());
 	}
 	
 	public void add(Sprite spr) {
+		if (spr == null) return;
 		if (!renderLock) {
 			gameBuffer.add(spr);
 			return;
 		}
-		nextToQueue.add(spr);
+		addQueue.add(spr);
 	}
 	
 	private void addQueued() {
-		for (Sprite spr : nextToQueue) {
+		for (Sprite spr : addQueue) {
 			add(spr);
 		}
-		nextToQueue.clear();
+		addQueue.clear();
 	}
 
+	public static void updateBuffer(Sprite spr) {
+		if (spr == null) return;
+		if (!renderLock) {
+			if (gameBuffer.remove(spr)) gameBuffer.add(spr);
+			return;
+		}
+		updateQueue.add(spr);
+	}
+	
 	private void updateQueued() {
-		for (Sprite spr : queueUpdate) {
+		for (Sprite spr : updateQueue) {
 			updateBuffer(spr);
 		}
+		updateQueue.clear();
+	}
+	
+	public void destroy(Sprite spr) {
+		if (spr == null) return;
+		if (!renderLock) {
+			gameBuffer.remove(spr);
+			return;
+		}
+		destroyQueue.add(spr);
+	}
+	
+	private void destroyQueued() {
+		for (Sprite spr : destroyQueue) {
+			destroy(spr);
+		}
+		destroyQueue.clear();
 	}
 	
 	public void render(Graphics2D g2) {
 		renderLock = true;
 		BufferedImage im;
 		ImageData data;
+		Sprite spr;
 		float alpha = 1.0f;
 		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		g2.setComposite(ac);
-		
-		
-		int size = gameBuffer.size();
+
 		gameBuffer2 = new PriorityQueue<>(gameBuffer);
 		
-		for (int i = 0; i < size; i++) {
-			data = gameBuffer2.poll().getRenderInfo();
+		while (!gameBuffer2.isEmpty()) {
+			spr = gameBuffer2.poll();
+			if (spr.isDestroyed()) continue;
+			data = spr.getRenderInfo();
 			//System.out.println(data);
 			if (data.visible) {
 				im = ImageBufferHandler.getImage(data.type, data.color, data.quality);
@@ -76,14 +107,7 @@ public final class Renderer {
 		renderLock = false;
 		addQueued();
 		updateQueued();
-	}
-	
-	public static void updateBuffer(Sprite sprite) {
-		if (renderLock) {
-			queueUpdate.add(sprite);
-		}
-		if (gameBuffer.remove(sprite)) 
-			gameBuffer.add(sprite);
+		destroyQueued();
 	}
 	
 	public static Renderer getInstance() {

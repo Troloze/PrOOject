@@ -1,13 +1,16 @@
 package game;
 
-import java.awt.geom.Point2D;
-
 import engine.SpriteHolder;
+import misc.Transform;
 
 public abstract class Entity implements SpriteHolder {
-	public Point2D position;
-	public double zPosition;
 	
+	public Transform transform;
+	protected boolean destroyed;
+	
+	public boolean isDestroyed() {
+		return destroyed;
+	}
 		
 	public abstract void update(double delta);
 	

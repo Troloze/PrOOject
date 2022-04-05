@@ -8,8 +8,6 @@ import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
-import game.Game;
-
 public final class MyPanel extends JPanel implements Runnable {
 	
 	private static final long serialVersionUID = 3505784181017226130L;
@@ -26,13 +24,11 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	private InputHandler input;
 	private GameLoop gameLoop;
-	private Game game;
 	private Renderer renderer;
 	
 	private MyPanel() {
 		gameLoop = GameLoop.getInstance();
 		input = InputHandler.getInstance();
-		game = Game.getInstance();
 		renderer = Renderer.getInstance();
 		
 		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
@@ -66,6 +62,7 @@ public final class MyPanel extends JPanel implements Runnable {
 		//g.setColor(Color.black);
 		g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
 		
+		@SuppressWarnings("unused")
 		long c = System.nanoTime();
 		
 		Graphics2D g2 = (Graphics2D) g;

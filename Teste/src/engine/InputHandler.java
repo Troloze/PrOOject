@@ -121,7 +121,6 @@ public final class InputHandler extends JComponent{
 	public static final class KeyboardHandler implements KeyListener{
 
 		private static InputHandler.KeyboardHandler instance;
-		private static InputHandler inputHandler;
 		private static Map<Integer, Integer> keyStatus;
 		
 		
@@ -154,7 +153,6 @@ public final class InputHandler extends JComponent{
 
 		public static KeyboardHandler getInstance() {
 			if (instance == null) {
-				inputHandler = InputHandler.getInstance();
 				instance = new KeyboardHandler();
 			}
 			return instance;
