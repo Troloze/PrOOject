@@ -5,23 +5,6 @@ import java.awt.geom.Point2D;
 
 public final class Misc {
 	
-	public static final class Other {
-		
-		public static final double nanoSecond = 1000000000.0;
-		
-		public static double getAngleBetween(Point2D a, Point2D b) {
-			return Math.toDegrees(Math.atan2(b.getY() - a.getY(), b.getX() - a.getX()));
-		}
-		
-		public static Point2D rotateAround(Point2D src, double dist, double angle) {
-			double x = Math.cos(angle) * dist + src.getX();
-			double y = Math.sin(angle) * dist + src.getY();
-			
-			return new Point2D.Double(x, y);
-		}
-	
-	}
-	
 	public static final class Background {
 		
 		public static final double TILE_WIDTH = 100.0;
@@ -190,7 +173,9 @@ public final class Misc {
 		}
 	}
 
-	public static final class MyMath {
+	public static final class Other {
+		
+		public static final double nanoSecond = 1000000000.0;
 		
 		public static final double toDeg = 180.0/Math.PI;
 		public static final double toRad = Math.PI/180.0;
@@ -587,6 +572,18 @@ public final class Misc {
 		public static double fsinRad(double angle) {
 			return fcosDeg(angle * toDeg - 90.0);
 		}
+		
+		public static double getAngleBetween(Point2D a, Point2D b) {
+			return Math.toDegrees(Math.atan2(b.getY() - a.getY(), b.getX() - a.getX()));
+		}
+		
+		public static Point2D rotateAround(Point2D src, double dist, double angle) {
+			double x = Math.cos(angle) * dist + src.getX();
+			double y = Math.sin(angle) * dist + src.getY();
+			
+			return new Point2D.Double(x, y);
+		}
+		
 		
 	}
 }

@@ -3,6 +3,7 @@ package game;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 
 import engine.ImageBufferHandler;
 import engine.MyPanel;
@@ -84,7 +85,7 @@ public final class Sprite {
 		}
 		offsetZPosition = transform.zPosition;
 		offsetRotation = transform.rotation;
-		if (transform.scale != null) offsetScale.setLocation(transform.scale);
+		offsetScale.setLocation(transform.scale, transform.scale);
 		offsetScale.setLocation(0, 0);
 		if (transform.position != null) offsetPosition.setLocation(transform.position);
 		offsetPosition.setLocation(0, 0);
@@ -116,8 +117,11 @@ public final class Sprite {
 	private void updateBody() {
 		if (body == null) return;
 		Transform transform = body.getTransform();
-		if (transform.scale != null) scale.setLocation(transform.scale.getX() + offsetScale.getX(), transform.scale.getY() + offsetScale.getY());
-		else scale.setLocation(offsetScale);
+		Point2D newScale = new Point2D.Double();
+		if (transform.defaultScale != null) 
+			newScale.setLocation(transform.defaultScale.getX() * transform.scale, transform.defaultScale.getY() * transform.scale);
+		scale.setLocation(newScale.getX() + offsetScale.getX(), newScale.getY() + offsetScale.getY());
+		
 		if (transform.position != null) position.setLocation(transform.position.getX() + offsetPosition.getX(), transform.position.getY() + offsetPosition.getY());
 		else position.setLocation(offsetPosition);
 		rotation = transform.rotation + offsetRotation;
@@ -166,8 +170,8 @@ public final class Sprite {
 	
 	private void updateTransform() {
 		if (!sprite.visible) return;
-		double cos = Misc.MyMath.fcosDeg(rotation);
-		double sin = Misc.MyMath.fsinDeg(rotation);
+		double cos = Misc.Other.fcosDeg(rotation);
+		double sin = Misc.Other.fsinDeg(rotation);
 
 		double xScale = screenScale.getX() * sprite.invScaleRates.getX();
 		double yScale = screenScale.getY() * sprite.invScaleRates.getY();

@@ -5,41 +5,41 @@ import java.awt.geom.Point2D;
 import misc.Misc;
 
 public abstract class Hazard extends Entity{
-	public double rotation;
-	public double rotationSpeed;
-	public double rotationAcceleration;
-	public double rotationDrag;
-	public double speed;
-	public double acceleration;
-	public double drag;
-	public double direction = 0;
-	public double hitboxRadius;
-	public double damageboxRadius;
-	public double life;
-	public double damage;
+	protected double rotationSpeed;
+	protected double rotationAcceleration;
+	protected double rotationDrag;
+	protected double speed;
+	protected double acceleration;
+	protected double drag;
+	protected double direction = 0;
+	protected double life;
+	protected double damage;
 	
-	private Point2D directionRate = new Point2D.Double(1.0, 0.0);
-	private double oldDirection = 0;
+	protected Point2D directionRate = new Point2D.Double(1.0, 0.0);
+	protected double oldDirection = 0;
 	
-	private double startTime;
-	private double lifeTime;
-	private Pattern pattern;
+	protected double startTime;
+	protected double lifeTime;
+	protected Pattern pattern;
 	
-	private boolean alive;
+	protected boolean alive;
 	
-	Hazard() {
+	protected Collider collider;
+	
+	protected Hazard() {
+		collider = new Collider();
 		alive = true;
 		startTime = System.nanoTime()/Misc.Other.nanoSecond;
 		pattern = null;
 	}
 	
-	Hazard(Pattern pat) {
+	protected Hazard(Pattern pat) {
 		alive = true;
 		startTime = System.nanoTime()/Misc.Other.nanoSecond;
 		this.pattern = pat;
 		pattern.onStart(this);
 	}
-	
+
 	public Point2D getDirectionRate() {
 		return directionRate;
 	}
@@ -64,7 +64,7 @@ public abstract class Hazard extends Entity{
 				rotationSpeed = 0;
 		}
 		
-		rotation += rotationSpeed;
+		transform.rotation += rotationSpeed;
 		
 		oldSpeed = speed;
 		if (speed > 0) {
@@ -98,7 +98,7 @@ public abstract class Hazard extends Entity{
 	}
 	
 	/**
-	 * Lembrar de não permitir que atualize se não estiver vivo.
+	 * Lembrar de nï¿½o permitir que atualize se nï¿½o estiver vivo.
 	 */
 	@Override
 	public void update(double delta) {
@@ -110,6 +110,127 @@ public abstract class Hazard extends Entity{
 		if (currentTime >= startTime + lifeTime) destroy();
 	}
 	
+	public Collider getCollider() {
+		return collider;
+	}
+		
+	public double getRotationSpeed() {
+		return rotationSpeed;
+	}
+
+	public void setRotationSpeed(double rotationSpeed) {
+		this.rotationSpeed = rotationSpeed;
+	}
+
+	public double getRotationAcceleration() {
+		return rotationAcceleration;
+	}
+
+	public void setRotationAcceleration(double rotationAcceleration) {
+		this.rotationAcceleration = rotationAcceleration;
+	}
+
+	public double getRotationDrag() {
+		return rotationDrag;
+	}
+
+	public void setRotationDrag(double rotationDrag) {
+		this.rotationDrag = rotationDrag;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getAcceleration() {
+		return acceleration;
+	}
+
+	public void setAcceleration(double acceleration) {
+		this.acceleration = acceleration;
+	}
+
+	public double getDrag() {
+		return drag;
+	}
+
+	public void setDrag(double drag) {
+		this.drag = drag;
+	}
+
+	public double getDirection() {
+		return direction;
+	}
+
+	public void setDirection(double direction) {
+		this.direction = direction;
+	}
+
+	public double getLife() {
+		return life;
+	}
+
+	public void setLife(double life) {
+		this.life = life;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getOldDirection() {
+		return oldDirection;
+	}
+
+	public void setOldDirection(double oldDirection) {
+		this.oldDirection = oldDirection;
+	}
+
+	public double getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(double startTime) {
+		this.startTime = startTime;
+	}
+
+	public double getLifeTime() {
+		return lifeTime;
+	}
+
+	public void setLifeTime(double lifeTime) {
+		this.lifeTime = lifeTime;
+	}
+
+	public Pattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(Pattern pattern) {
+		this.pattern = pattern;
+	}
+
+	public boolean isAlive() {
+		return alive;
+	}
+
+
+	public void setDirectionRate(Point2D directionRate) {
+		this.directionRate = directionRate;
+	}
+
+	public void setCollider(Collider collider) {
+		this.collider = collider;
+	}
+
 	@Override
 	public void destroy() {
 		if (pattern != null) pattern.onEnd(this);

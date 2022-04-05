@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 
 import engine.ImageBufferHandler;
 import engine.InputHandler;
@@ -12,7 +13,7 @@ public class TestEntity extends Entity{
 	
 	private TestEntity(double rotation, Point2D position, Point2D scale) {
 		
-		this.transform = new Transform(position, scale, rotation, 10.0);
+		this.transform = new Transform(position, new Point2D.Double(50, 50), 1, rotation, 10.0);
 		
 		this.sprt = new Sprite(this);
 		this.sprt.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_BLUE1);

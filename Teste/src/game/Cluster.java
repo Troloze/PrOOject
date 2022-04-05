@@ -3,7 +3,6 @@ package game;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,9 @@ import misc.Transform;
 public class Cluster implements SpriteHolder {
 	
 	
+	private Entity body;
 	private Transform transform;
+	private int clusterSize;
 	private List<Point> coordinates;
 	private Map<Point, Sprite> sprites;
 	private Map<Sprite, Transform> offset;
@@ -45,15 +46,54 @@ public class Cluster implements SpriteHolder {
 			coord = coordinates.get(i);
 			sprite = sprites.get(i);
 			transform = relativeTransform(transforms.get(i));
+			sprite.setOffset(transform);
 			this.coordinates.add(coord);
 			this.sprites.put(coord, sprite);
 			this.offset.put(sprite, transform);
 		}
+		clusterSize = n;
 	}
 	
-	public Cluster split(int n, int[] values) {
+	public Cluster split(int n, int[] values, Point2D offNew, Point2D offOld) {
+		if (n != values.length) return null;
+		if (n > clusterSize) {
+			System.out.println("Invalid cluster split request: invalid ammount");
+			return null;
+		}
+		Point p = coordinates.get(values[0]);
+		Sprite spr = sprites.get(p);
+		Transform trans = offset.get(spr);
+		Cluster retCluster = new Cluster(trans);
+		retCluster.offsetCenter(offNew);
+
+		List<Point> nCoords = new ArrayList<>();
+		List<Sprite> nSprites = new ArrayList<>();
+		List<Transform> nOffset = new ArrayList<>();
 		
-		return null;
+		for (int i = 0; i < n; i++) {
+			if (values[i] > n) {
+				System.out.println("Invalid cluster split request: Invalid index");
+				continue;
+			}
+			p = coordinates.get(values[i]);
+			coordinates.remove(values[i]);
+			
+			spr = sprites.get(p);
+			sprites.remove(p);
+			
+			trans = offset.get(spr);
+			offset.remove(spr);
+			
+			nCoords.add(p);
+			nSprites.add(spr);
+			nOffset.add(trans);
+		}
+		
+		retCluster.generateCluster(n, nCoords, nSprites, nOffset);
+		
+		this.offsetCenter(offOld);
+		
+		return retCluster;
 	}
 	
 	public Point2D relativeDistance(Point2D point) {
@@ -67,43 +107,58 @@ public class Cluster implements SpriteHolder {
 				transform.position.getX() - this.transform.position.getX(),
 				transform.position.getY() - this.transform.position.getY());
 		
-		retTransform.scale.setLocation(
-				transform.scale.getX() - this.transform.scale.getX(),
-				transform.scale.getY() - this.transform.scale.getY());
-		
+		retTransform.scale = transform.scale - this.transform.scale;
 		retTransform.rotation = transform.rotation - this.transform.rotation;
 		retTransform.zPosition = transform.zPosition - this.transform.zPosition;
 		
 		return retTransform;
 	}
 	
-	public void updateCenter() {
-		
+	public void offsetCenter(Point2D off) {
+		if (off == null) return;
+		if (off.getX() == off.getY() && off.getY() == 0.0) return;
+		Point2D tPos = transform.position;
+		Transform trans;
+		transform.position.setLocation(tPos.getX() + off.getY(), tPos.getY() + off.getY());
+		for (Sprite spr : sprites.values()) {
+			trans = offset.get(spr);
+			tPos = trans.position;
+			trans.position.setLocation(tPos.getX() + off.getY(), tPos.getY() + off.getY());
+			spr.setOffset(trans);
+		}
 	}
 	
+	public void update() {
+		if (body == null) return;
+		if (body.isDestroyed()) return;
+		transform.follow(body.getTransform(), Transform.FOLLOW_NOT_DEFAULT_SCALE);			
+	}
 	
+	public int getClusterSize() {
+		return clusterSize;
+	}
 	
 	@Override
 	public Transform getTransform() {
-		// TODO Auto-generated method stub
 		return transform;
 	}
-	
 	
 	public void destroy() {
 		for (Sprite spr: sprites.values()) {
 			if (!spr.isDestroyed()) spr.destroy();
 			spr = null;
 		}
+		
 		offset.clear();
 		sprites.clear();
+		coordinates.clear();
 		offset = null;
 		sprites = null;
+		body = null;
 		destroyed = true;
 	}
 
 	public boolean isDestroyed() {
 		return destroyed;
 	}
-	
 }

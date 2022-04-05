@@ -5,7 +5,7 @@ import misc.Transform;
 
 public abstract class Entity implements SpriteHolder {
 	
-	public Transform transform;
+	protected Transform transform;
 	protected boolean destroyed;
 	
 	public boolean isDestroyed() {
@@ -14,6 +14,7 @@ public abstract class Entity implements SpriteHolder {
 		
 	public abstract void update(double delta);
 	
+
 	/**
 	 * REMOVER TODAS AS REFERENCIAS AO OBJETO PARA PERMITIR O COLETOR DE LIXO REALIZAR A COLETA DO OBJETO
 	 */

@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 
 import engine.ImageBufferHandler;
 import engine.InputHandler;
@@ -19,7 +20,7 @@ public class Player extends Entity{
 	}
 	
 	private Player() {
-		this.transform = new Transform(null, new Point2D.Double(50.0, 43.0), 0 , 10.0);
+		this.transform = new Transform(null, new Point2D.Double(50.0, 43.0), 1, 0 , 10.0);
 		if (input == null) input = InputHandler.getInstance();
 		this.sprite = new Sprite(this);
 
