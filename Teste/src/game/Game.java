@@ -15,10 +15,16 @@ import misc.Transform;
 public final class Game {
 	private static Game instance;
 	private static EntityInstancer eI;
-	private List<Entity> entities;
-	private List<Collisionable> colDetect;
-	private List<Point> colPairs;
-	private List<Entity> destroyQueue;
+	private static List<Entity> entities;
+	private static List<Collisionable> colDetect;
+	private static List<Point> colPairs;
+	private static List<Entity> destroyQueue;
+	
+	private static Entity background;
+	
+	public static Entity getBackground() {
+		return background;
+	}
 		
 	private boolean test = true;
 	
@@ -45,7 +51,8 @@ public final class Game {
 		if (test) {
 			eI.instance(EntityInstancer.ENT_PLAYER, iP);
 			test = false;
-			entities.add(new Background());
+			background = new Background();
+			entities.add(background);
 		}
 		
 		updateEntities(delta);
@@ -90,8 +97,8 @@ public final class Game {
 				if (j >= size) break;
 				test = colDetect.get(j);
 				testTrans = test.getTransform();
-				if(Math.abs(currentTrans.zPosition - testTrans.zPosition) > 2) continue;
-				if (currentTrans.position.getX() + current.getCollider().getHitbox() > testTrans.position.getX()) {
+				if(Math.abs(currentTrans.getZPosition() - testTrans.getZPosition()) > 2) continue;
+				if (currentTrans.getPosition().getX() + current.getCollider().getHitbox() > testTrans.getPosition().getX()) {
 					if ((current.getCollider().getHitFlags() & test.getCollider().getDamageFlags()) != 0 || (current.getCollider().getDamageFlags() & test.getCollider().getHitFlags()) != 0) 
 						colPairs.add(new Point(i, j));
 				}
@@ -102,11 +109,11 @@ public final class Game {
 		for (Point pt : colPairs) {
 			current = colDetect.get(pt.x);
 			test = colDetect.get(pt.y);
-			distT = current.getTransform().position.distanceSq(test.getTransform().position);
+			distT = current.getTransform().getPosition().distanceSq(test.getTransform().getPosition());
 			
 			if ((current.getCollider().getHitFlags() & test.getCollider().getDamageFlags()) != 0) {
-				boxOne = (current.getCollider().getDamagebox() * current.getTransform().scale);
-				boxTwo = (test.getCollider().getHitbox() * test.getTransform().scale);
+				boxOne = (current.getCollider().getDamagebox() * current.getTransform().getScale());
+				boxTwo = (test.getCollider().getHitbox() * test.getTransform().getScale());
 				sumBoxes = boxOne * boxOne + boxTwo * boxTwo;
 				
 				if (sumBoxes >= distT) {
@@ -115,8 +122,8 @@ public final class Game {
 			}
 			
 			if ((current.getCollider().getDamageFlags() & test.getCollider().getHitFlags()) != 0) {
-				boxOne = (current.getCollider().getHitbox() * current.getTransform().scale);
-				boxTwo = (test.getCollider().getDamagebox() * test.getTransform().scale);
+				boxOne = (current.getCollider().getHitbox() * current.getTransform().getScale());
+				boxTwo = (test.getCollider().getDamagebox() * test.getTransform().getScale());
 				sumBoxes = boxOne * boxOne + boxTwo * boxTwo;
 				
 				if (sumBoxes >= distT) {
@@ -150,7 +157,7 @@ public final class Game {
 				continue;
 			}
 			g2.setColor(Color.red);
-			g2.drawOval((int) ent.getTransform().position.getX() + 640, (int) ent.getTransform().position.getY() + 480, 25, 25);
+			g2.drawOval((int) ent.getTransform().getPosition().getX() + 640, (int) ent.getTransform().getPosition().getY() + 480, 25, 25);
 		}
 	}
 	
@@ -158,8 +165,8 @@ public final class Game {
 
 		@Override
 		public int compare(Collisionable arg0, Collisionable arg1) {
-			double x0 = arg0.getTransform().position.getX();
-			double x1 = arg1.getTransform().position.getX();
+			double x0 = arg0.getTransform().getPosition().getX();
+			double x1 = arg1.getTransform().getPosition().getX();
 
 			return (x0 > x1) ? 1 : ((x1 > x0) ? -1 : 0);
 		}

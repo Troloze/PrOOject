@@ -7,7 +7,7 @@ public final class Misc {
 	
 	public static final class Background {
 		
-		public static final double TILE_WIDTH = 100.0;
+		public static final double TILE_WIDTH = 50.0;
 		public static final double TILE_HEIGHT = TILE_WIDTH/2.0 * 1.73205080757;
 		public static final double TILE_HEIGHT_O3 = TILE_HEIGHT/3.0;
 		public static final double TILE_HEIGHT_2O3 = TILE_HEIGHT_O3 * 2;
@@ -18,7 +18,7 @@ public final class Misc {
 			double comp;
 			
 			Point2D newPos = new Point2D.Double(2 * (worldPos.getX() - offset.getX())/TILE_WIDTH, (worldPos.getY() - offset.getY())/TILE_HEIGHT + 1.0/3.0);
-			Point2D newDecPos = new Point2D.Double(newPos.getX() - (int) Math.floor(newPos.getX()), newPos.getY() - (int) Math.floor(newPos.getY()));
+			Point2D newDecPos = new Point2D.Double(newPos.getX() - (int) Math.floor(newPos.getX()), (newPos.getY() - (int) Math.floor(newPos.getY())));
 			
 			
 			retX = (int) Math.floor(newPos.getX());
@@ -29,18 +29,15 @@ public final class Misc {
 			if (newDecPos.getX() >= comp)
 				retX += 1;
 			
-			return new Point((int) Math.floor(retX + 0.5), (int) Math.floor(retY + 0.5));
+			return new Point((int) Math.floor(retX + 0.5), -(int) Math.floor(retY + 0.5));
 		}
 		
 		public static Point2D back2World(Point2D offset, Point backPos) {
+			if (offset == null) offset = new Point2D.Double();
 			double retX = backPos.getX() * TILE_WIDTH_O2;
-			double retY;
+			double retY = (-backPos.getY() * TILE_HEIGHT);
 			
-			if ((backPos.getX()%2 == 0) ^ (backPos.getY()%2 == 0)) 
-				retY = backPos.getX() * TILE_HEIGHT;
-			else
-				retY = backPos.getY() * TILE_HEIGHT + TILE_HEIGHT_O3;
-			
+			if (backPos.getX()%2 == backPos.getY()%2 ) retY += TILE_HEIGHT_O3;
 			return new Point2D.Double(retX + offset.getX(), retY + offset.getY());
 		}
 

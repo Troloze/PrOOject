@@ -5,6 +5,7 @@ import java.awt.geom.Point2D.Double;
 
 import engine.ImageBufferHandler;
 import engine.InputHandler;
+import misc.ShapeData;
 import misc.Transform;
 
 public class Player extends Entity implements Collisionable{
@@ -34,8 +35,8 @@ public class Player extends Entity implements Collisionable{
 		
 		this.sprite.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_BLUE1);
 		
-		this.transform.position.setLocation(DEFAULT_POS.getX(), DEFAULT_POS.getY());
-		this.transform.zPosition = 10;
+		this.transform.getPosition().setLocation(DEFAULT_POS.getX(), DEFAULT_POS.getY());
+		this.transform.setZPosition(10);
 		this.destroyed = false;
 	}
 
@@ -48,23 +49,26 @@ public class Player extends Entity implements Collisionable{
 		}
 		
 		if(input.getInput(InputHandler.KEY_UP) == 1) {
-			transform.position.setLocation(transform.position.getX(), transform.position.getY() - (PLAYER_SPEED * delta * rate));
+			transform.getPosition().setLocation(transform.getPosition().getX(), transform.getPosition().getY() - (PLAYER_SPEED * delta * rate));
 		}
 		
 		if(input.getInput(InputHandler.KEY_DOWN) == 1) {
-			transform.position.setLocation(transform.position.getX(), transform.position.getY() + (PLAYER_SPEED * delta * rate));
+			transform.getPosition().setLocation(transform.getPosition().getX(), transform.getPosition().getY() + (PLAYER_SPEED * delta * rate));
 		}
 		
 		if(input.getInput(InputHandler.KEY_LEFT) == 1) {
-			transform.position.setLocation(transform.position.getX() - (PLAYER_SPEED * delta * rate), transform.position.getY());
+			transform.getPosition().setLocation(transform.getPosition().getX() - (PLAYER_SPEED * delta * rate), transform.getPosition().getY());
 		}
 		
 		if(input.getInput(InputHandler.KEY_RIGHT) == 1) {
-			transform.position.setLocation(transform.position.getX() + (PLAYER_SPEED * delta * rate), transform.position.getY());
+			transform.getPosition().setLocation(transform.getPosition().getX() + (PLAYER_SPEED * delta * rate), transform.getPosition().getY());
 		}
-		
-		
-		
+		if (input.getInput(InputHandler.KEY_SHOOT) == 0) {
+			Cluster c;
+			c = ((Background) Game.getBackground()).getEnemyFromScreen(transform.getPosition(), ShapeData.MEGA_CRYSTAL);
+			c.getTransform().setZPosition(0);
+			//System.out.println(c.getTransform());
+		}
 	}
 
 	@Override

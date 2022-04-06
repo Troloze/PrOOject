@@ -13,18 +13,64 @@ public class Transform {
 	public static final int FOLLOW_ZPOS = 16;
 	public static final int FOLLOW_NOT_DEFAULT_SCALE = 27;
 	
-	public Point2D position;
-	public double scale;
-	public Point2D defaultScale;
-	public double rotation;
-	public double zPosition;
+	private Point2D position;
+	private double scale;
+	private Point2D defaultScale;
+	private double rotation;
+	private double zPosition;
 	
+	public Point2D getPosition() {
+		return position;
+	}
+
+	public double getScale() {
+		return scale;
+	}
+
+	public void setScale(double scale) {
+		this.scale = scale;
+	}
+
+	public Point2D getDefaultScale() {
+		return defaultScale;
+	}
+	
+
+
+	public double getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(double rotation) {
+		while (rotation < 360) {
+			rotation += 360;
+		}
+		while (rotation >= 720) {
+			rotation -= 360;
+		}
+		this.rotation = rotation;
+	}
+
+	public double getZPosition() {
+		return zPosition;
+	}
+
+	public void setZPosition(double zPosition) {
+		this.zPosition = zPosition;
+	}
+
 	public Transform(Point2D position, Point2D defaultScale, double scale, double rotation, double zPosition) {
 		this.position = new Point2D.Double();
 		this.defaultScale = new Point2D.Double();
 		this.scale = scale;
 		if (position != null) this.position.setLocation(position);
 		if (defaultScale != null) this.defaultScale.setLocation(defaultScale);
+		while (rotation < 360) {
+			rotation += 360;
+		}
+		while (rotation >= 720) {
+			rotation -= 360;
+		}
 		this.rotation = rotation;
 		this.zPosition = zPosition;
 	}
@@ -32,9 +78,9 @@ public class Transform {
 	public Transform(Transform transform) {
 		if (transform == null) {
 			this.position = new Point2D.Double();
-			this.defaultScale = new Point2D.Double();
+			this.defaultScale = new Point2D.Double(1, 1);
 			this.scale = 1.0;
-			this.rotation = 0.0;
+			this.rotation = 360.0;
 			this.zPosition = 0.0;
 			return;
 		}
@@ -49,9 +95,9 @@ public class Transform {
 		
 	public Transform() {
 		this.position = new Point2D.Double();
-		this.defaultScale = new Point2D.Double();
+		this.defaultScale = new Point2D.Double(1, 1);
 		this.scale = 1.0;
-		this.rotation = 0.0;
+		this.rotation = 360.0;
 		this.zPosition = 0.0;
 	}
 	

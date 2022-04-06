@@ -74,23 +74,26 @@ public final class Sprite {
 		return sprite;
 	}
 	
+	public void setBody(SpriteHolder body) {
+		this.body = body;
+	}
+	
 	public void setOffset(Transform transform) {
 		//System.out.println(transform);
 		if (transform == null) {
 			offsetZPosition = 0.0;
-			offsetRotation = 0.0;
+			offsetRotation = 360.0;
 			offsetScale.setLocation(0, 0);
 			offsetPosition.setLocation(0, 0);
 			System.out.println("NULL SPRITE OFFSET TRANSFORM");
 			return;
 		}
-		offsetZPosition = transform.zPosition;
-		offsetRotation = transform.rotation;
-		offsetScale.setLocation(transform.defaultScale.getX() * transform.scale, transform.defaultScale.getY() * transform.scale);
-		if (transform.position != null) offsetPosition.setLocation(transform.position);
+		offsetZPosition = transform.getZPosition();
+		offsetRotation = transform.getRotation() + 360;
+		offsetScale.setLocation(transform.getDefaultScale().getX() * transform.getScale(), transform.getDefaultScale().getY() * transform.getScale());
+		if (transform.getPosition() != null) offsetPosition.setLocation(transform.getPosition());
 		else offsetPosition.setLocation(0, 0);
 	}
-	
 	
 	public void set(int type, int color) {
 		changeSprite(type);
@@ -116,31 +119,42 @@ public final class Sprite {
 	}
 	
 	private void updateBody() {
+		double xPos, yPos, cos, sin;
 		if (body == null) {
-			scale.setLocation(offsetScale);
 			position.setLocation(offsetPosition);
+			scale.setLocation(offsetScale);
 			rotation = offsetRotation;
 			zPosition = offsetZPosition;
-			return;
 		}
 		Transform transform = body.getTransform();
-		Point2D newScale = new Point2D.Double();
+		if (alpha == 0.9) System.out.println(offsetPosition);
 		if (transform == null) {
 			position.setLocation(offsetPosition);
-			scale.setLocation(newScale.getX() + offsetScale.getX(), newScale.getY() + offsetScale.getY());
+			scale.setLocation(offsetScale);
 			rotation = offsetRotation;
 			zPosition = offsetZPosition;
-			return;
 		}
-		if (transform.defaultScale != null) 
-			newScale.setLocation(transform.defaultScale.getX() * transform.scale, transform.defaultScale.getY() * transform.scale);
+		Point2D newScale = new Point2D.Double();
+		if (transform.getDefaultScale() != null) 
+			newScale.setLocation(transform.getDefaultScale().getX() * transform.getScale(), transform.getDefaultScale().getY() * transform.getScale());
 		
 		scale.setLocation(newScale.getX() + offsetScale.getX(), newScale.getY() + offsetScale.getY());
 		
-		if (transform.position != null) position.setLocation(transform.position.getX() + offsetPosition.getX(), transform.position.getY() + offsetPosition.getY());
-		else position.setLocation(offsetPosition);
-		rotation = transform.rotation + offsetRotation;
-		zPosition = transform.zPosition + offsetZPosition;
+		if (transform.getPosition() != null) {
+			
+			cos = Misc.Other.fcosDeg(transform.getRotation());
+			sin = Misc.Other.fsinDeg(transform.getRotation());
+			xPos = transform.getScale() * cos * offsetPosition.getX() - transform.getScale() * sin * offsetPosition.getY() + transform.getPosition().getX();
+			yPos = transform.getScale() * sin * offsetPosition.getX() + transform.getScale() * cos * offsetPosition.getY() + transform.getPosition().getY(); 
+		}
+		else {
+			xPos = offsetPosition.getX();
+			yPos = offsetPosition.getY();
+		}
+	
+		position.setLocation(xPos, yPos);
+		rotation = transform.getRotation() + offsetRotation;
+		zPosition = transform.getZPosition() + offsetZPosition;
 	}
 	
 	private void updateZ() {

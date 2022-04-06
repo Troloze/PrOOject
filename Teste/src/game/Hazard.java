@@ -63,9 +63,7 @@ public abstract class Hazard extends Entity implements Collisionable{
 			if (oldSpeed <= 0 && rotationSpeed > 0) 
 				rotationSpeed = 0;
 		}
-		
-		transform.rotation += rotationSpeed;
-		
+				
 		oldSpeed = speed;
 		if (speed > 0) {
 			accelResultant = acceleration - drag;
@@ -98,7 +96,7 @@ public abstract class Hazard extends Entity implements Collisionable{
 	}
 	
 	/**
-	 * Lembrar de não permitir que atualize se não estiver vivo.
+	 * Lembrar de nï¿½o permitir que atualize se nï¿½o estiver vivo.
 	 */
 	protected void baseUpdate(double delta) {
 		if (!alive) return;

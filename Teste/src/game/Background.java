@@ -1,45 +1,186 @@
 package game;
 
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import engine.ImageBufferHandler;
 import engine.SpriteHolder;
+import misc.Misc;
+import misc.ShapeData;
 import misc.Transform;
 
 public class Background extends Entity implements SpriteHolder {
 
 	
-	private static final int size = 27;
-	private Sprite[][] tiles;
+	private static final int sizeX = 27;
+	private static final int sizeY = 11;
+	private Map<Point, Sprite> tiles;
+	private double newTileThreshold;
+	private int newTileYValue;
 	
 	public Background() {
 		transform = new Transform();
-		transform.defaultScale = null;
-		tiles = new Sprite[size * 2][100];
-		Transform trans = new Transform();
-		trans.scale = 1.01;
-		trans.defaultScale.setLocation(50, 43);
-		trans.zPosition = 5;
-		for (int i = -size; i < size; i++) {
-			for (int j = -50; j < 50; j++) {
-				trans.position.setLocation(i * 25, (j * 43) + ((i%2 == 0 ^ j%2 == 0) ? 0 : -43.0/3.0));
-				trans.rotation = (i%2 == 0 ^ j%2 == 0) ? 0 : 180;
-				tiles[size + i][50 + j] = new Sprite(this);
-				tiles[size + i][50 + j].setOffset(trans);
-				tiles[size + i][50 + j].set(ImageBufferHandler.TRIANGLE, (i%2 == 0 ^ j%2 == 0) ? ImageBufferHandler.T_GRAY1 : ImageBufferHandler.T_GRAY2);
-			}
+		transform.getDefaultScale().setLocation(1, 1);
+		tiles = new HashMap<>();
+		for (int j = -sizeY; j < sizeY; j++) {
+			generateLine(j);
 		}
+		
+		newTileYValue = 11;
+		newTileThreshold = 43;
+	}
+	
+	private void generateLine(int y) {
+		Transform trans = new Transform();
+		Sprite spr;
+		trans.setScale(1.01);
+		trans.getDefaultScale().setLocation(50, 43);
+		trans.setZPosition(5);
+		Point p;
+		for (int i = - sizeX; i < sizeX; i++) {
+			p = new Point(i, y);
+			trans.getPosition().setLocation(i * 25, (-y * 43) + ((i%2 == 0 ^ y%2 == 0) ? -43.0/3.0 : 0));
+			trans.setRotation(((i%2 == 0) ^ (y%2 == 0)) ? 180 : 0);
+			spr = new Sprite(this);
+			spr.setOffset(trans);
+			spr.setAlpha(0.5f);
+			spr.set(ImageBufferHandler.TRIANGLE, (i%2 == 0 ^ y%2 == 0) ? ImageBufferHandler.T_GRAY1 : ImageBufferHandler.T_GRAY2);
+			tiles.put(p, spr);			
+		}
+	}
+	
+	private void destroyLine(int y) {
+		Point p = new Point();
+		Sprite spr;
+		for (int i = -sizeX; i < sizeX; i++) {
+			p.setLocation(i, y);
+			spr = tiles.get(p);
+			if(spr == null) continue;
+			spr.destroy();
+		}
+	}
+	
+	private Sprite pop(Point point) {
+		Sprite spr;
+		spr = tiles.get(point);
+		if (spr == null) return null;
+		tiles.remove(point);
+		spr.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_LIGHT1);
+		spr.setAlpha(1.0f);
+		return spr;
+	}
+	
+	private Sprite[] massPop(Point center, int[][] it, boolean isDown) {
+		if (it == null) return null;
+		Sprite[] ret = new Sprite[it.length];
+		Point p = new Point();
+		for (int i = 0; i < it.length; i++) {
+			p.setLocation(center.getX() + it[i][0], center.getY() + ((isDown) ? (-it[i][1]) : it[i][1]));
+			
+			ret[i] = pop(p);
+			if (ret[i] == null) return null;
+		}
+		return ret;
+	}
+	
+	private boolean test(Point point) {
+		if (tiles.get(point) == null) return false;
+		return true;
+	}
+	
+	private boolean massTest(Point center, int[][] it, boolean isDown) {
+		if (it == null) return false;
+		Point p = new Point();
+		for (int i = 0; i < it.length; i++) {
+			p.setLocation(center.getX() + it[i][0], center.getY() + ((isDown) ? (-it[i][1]) : it[i][1]));
+			
+			if (!test(p)) return false;
+		}
+		return true;
+	}
+	
+	public Cluster getEnemy(Point orig, ShapeData sd) {
+		if (sd == null || orig == null) return null;
+		Point p = new Point();
+		List<Point> coords = new ArrayList<>();
+		List<Sprite> sprites = new ArrayList<>();
+		List<Transform> transf = new ArrayList<>();
+		Point2D worldPos = Misc.Background.back2World(transform.getPosition(), orig);
+		Transform newTrans = new Transform(transform);
+		newTrans.getPosition().setLocation(worldPos);
+		int[][][] iterate;
+		int[][] toIterate;
+		int[][] toReturn;
+		int n, k;
+		Sprite[] spriteList;
+		Cluster retCluster = new Cluster(newTrans);
+		p.setLocation(
+				(orig.getX() < 0) ? - orig.getX() : orig.getX(),
+				(orig.getY() < 0) ? - orig.getY() : orig.getY()
+		);
+		boolean isDown = (p.getX()%2 != p.getY()%2);
+
+
+		iterate = sd.shape;
+		toReturn = iterate[0];
+		k = 0;
+		n = (int) (Math.random() * 2);
+		while (k < 3) {
+			toIterate = iterate[n];
+			if (massTest(orig, toIterate, isDown)) {
+				spriteList = massPop(orig, toIterate, isDown);
+				if(spriteList == null) return null;
+				for (int i = 0; i < spriteList.length; i++) {
+					newTrans = new Transform(transform);
+					newTrans.setScale(1);
+				
+					newTrans.getDefaultScale().setLocation(50, 43);
+					p = new Point();
+					p.setLocation(toReturn[i][0], toReturn[i][1]);
+					worldPos = Misc.Background.back2World(null, p);
+					newTrans.getPosition().setLocation(worldPos);
+					coords.add(p);
+					p.setLocation(
+							(p.getX() < 0) ? - p.getX() : p.getX(),
+							(p.getY() < 0) ? - p.getY() : p.getY());
+					newTrans.setRotation(((p.getX()%2 != p.getY()%2)? 180 : 0));
+					sprites.add(spriteList[i]);
+					transf.add(newTrans);
+				}
+				break;
+			}
+			n = (n + 1)%3;
+			k++;
+		}
+		retCluster.generateCluster(sd.size, coords, sprites, transf);
+		retCluster.offsetCenter(new Point2D.Double(sd.offsetX[n], sd.offsetY[n]));
+		retCluster.getTransform().setRotation(sd.angle[n]);
+
+		return retCluster;
+	}
+	
+	public Cluster getEnemyFromScreen(Point2D orig, ShapeData sd) {
+		return getEnemy(Misc.Background.world2Back(transform.getPosition(), orig), sd);
 	}
 	
 	@Override
 	public Transform getTransform() {
-		// TODO Auto-generated method stub
 		return transform;
 	}
-
+	
 	@Override
 	public void update(double delta) {
-		transform.position.setLocation(transform.position.getX(), transform.position.getY() + 100 * delta);
-		//transform.rotation += 10 * delta;
-
+		transform.getPosition().setLocation(transform.getPosition().getX(), transform.getPosition().getY() + 100 * delta);
+		if (transform.getPosition().getY() > newTileThreshold) {
+			generateLine(newTileYValue);
+			destroyLine(newTileYValue - 2 * sizeY);
+			newTileYValue += 1;
+			newTileThreshold += 43;
+		}
 	}
 
 	@Override

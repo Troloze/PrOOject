@@ -19,7 +19,7 @@ public class Cluster implements SpriteHolder {
 	private int clusterSize;
 	private List<Point> coordinates;
 	private Map<Point, Sprite> sprites;
-	private Map<Sprite, Transform> offset;
+	private Map<Point, Transform> offset;
 	private boolean destroyed;
 	
 	public Cluster() {
@@ -45,11 +45,12 @@ public class Cluster implements SpriteHolder {
 		for (int i = 0; i < n; i++) {
 			coord = coordinates.get(i);
 			sprite = sprites.get(i);
+			sprite.setBody(this);
 			transform = relativeTransform(transforms.get(i));
 			sprite.setOffset(transform);
 			this.coordinates.add(coord);
 			this.sprites.put(coord, sprite);
-			this.offset.put(sprite, transform);
+			this.offset.put(coord, transform);
 		}
 		clusterSize = n;
 	}
@@ -62,7 +63,7 @@ public class Cluster implements SpriteHolder {
 		}
 		Point p = coordinates.get(values[0]);
 		Sprite spr = sprites.get(p);
-		Transform trans = offset.get(spr);
+		Transform trans = offset.get(p);
 		Cluster retCluster = new Cluster(trans);
 		retCluster.offsetCenter(offNew);
 
@@ -81,8 +82,8 @@ public class Cluster implements SpriteHolder {
 			spr = sprites.get(p);
 			sprites.remove(p);
 			
-			trans = offset.get(spr);
-			offset.remove(spr);
+			trans = offset.get(p);
+			offset.remove(p);
 			
 			nCoords.add(p);
 			nSprites.add(spr);
@@ -97,19 +98,17 @@ public class Cluster implements SpriteHolder {
 	}
 	
 	public Point2D relativeDistance(Point2D point) {
-		return new Point2D.Double(point.getX() - transform.position.getX(), point.getY() - transform.position.getY());
+		return new Point2D.Double(point.getX() - transform.getPosition().getX(), point.getY() - transform.getPosition().getY());
 	}
 	
 	public Transform relativeTransform(Transform transform) {
-		Transform retTransform = new Transform();
+		Transform retTransform = new Transform(transform);
 		
-		retTransform.position.setLocation(
-				transform.position.getX() - this.transform.position.getX(),
-				transform.position.getY() - this.transform.position.getY());
+		retTransform.getPosition().setLocation(
+				transform.getPosition().getX() - this.transform.getPosition().getX(),
+				transform.getPosition().getY() - this.transform.getPosition().getY());
 		
-		retTransform.scale = transform.scale - this.transform.scale;
-		retTransform.rotation = transform.rotation - this.transform.rotation;
-		retTransform.zPosition = transform.zPosition - this.transform.zPosition;
+		//retTransform.setRotation(transform.getRotation() - this.transform.getRotation());
 		
 		return retTransform;
 	}
@@ -117,14 +116,14 @@ public class Cluster implements SpriteHolder {
 	public void offsetCenter(Point2D off) {
 		if (off == null) return;
 		if (off.getX() == off.getY() && off.getY() == 0.0) return;
-		Point2D tPos = transform.position;
+		Point2D tPos = transform.getPosition();
 		Transform trans;
-		transform.position.setLocation(tPos.getX() + off.getY(), tPos.getY() + off.getY());
-		for (Sprite spr : sprites.values()) {
-			trans = offset.get(spr);
-			tPos = trans.position;
-			trans.position.setLocation(tPos.getX() + off.getY(), tPos.getY() + off.getY());
-			spr.setOffset(trans);
+		transform.getPosition().setLocation(tPos.getX() + off.getY(), tPos.getY() + off.getY());
+		for (Point p : coordinates) {
+			trans = offset.get(p);
+			tPos = trans.getPosition();
+			trans.getPosition().setLocation(tPos.getX() + off.getY(), tPos.getY() + off.getY());
+			sprites.get(p).setOffset(trans);
 		}
 	}
 	
