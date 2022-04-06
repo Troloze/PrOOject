@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 
 import misc.Misc;
 
-public abstract class Hazard extends Entity{
+public abstract class Hazard extends Entity implements Collisionable{
 	protected double rotationSpeed;
 	protected double rotationAcceleration;
 	protected double rotationDrag;
@@ -98,10 +98,9 @@ public abstract class Hazard extends Entity{
 	}
 	
 	/**
-	 * Lembrar de nï¿½o permitir que atualize se nï¿½o estiver vivo.
+	 * Lembrar de não permitir que atualize se não estiver vivo.
 	 */
-	@Override
-	public void update(double delta) {
+	protected void baseUpdate(double delta) {
 		if (!alive) return;
 		double currentTime = System.nanoTime()/Misc.Other.nanoSecond;
 		updateStats();
@@ -109,7 +108,7 @@ public abstract class Hazard extends Entity{
 		if (pattern != null) pattern.cast(startTime, currentTime);
 		if (currentTime >= startTime + lifeTime) destroy();
 	}
-	
+		
 	public Collider getCollider() {
 		return collider;
 	}
@@ -190,16 +189,8 @@ public abstract class Hazard extends Entity{
 		return oldDirection;
 	}
 
-	public void setOldDirection(double oldDirection) {
-		this.oldDirection = oldDirection;
-	}
-
 	public double getStartTime() {
 		return startTime;
-	}
-
-	public void setStartTime(double startTime) {
-		this.startTime = startTime;
 	}
 
 	public double getLifeTime() {
@@ -214,28 +205,12 @@ public abstract class Hazard extends Entity{
 		return pattern;
 	}
 
-	public void setPattern(Pattern pattern) {
-		this.pattern = pattern;
-	}
-
 	public boolean isAlive() {
 		return alive;
 	}
 
-
-	public void setDirectionRate(Point2D directionRate) {
-		this.directionRate = directionRate;
-	}
-
-	public void setCollider(Collider collider) {
-		this.collider = collider;
-	}
-
-	@Override
-	public void destroy() {
+	protected void baseDestroy() {
 		if (pattern != null) pattern.onEnd(this);
 		if (pattern != null) pattern.onDeath(this);
 	}
-
-	public abstract void onCollision(Hazard entity);
 }

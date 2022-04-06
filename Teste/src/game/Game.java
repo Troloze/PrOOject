@@ -1,5 +1,7 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ public final class Game {
 	private static Game instance;
 	private static EntityInstancer eI;
 	private List<Entity> entities;
-	private List<Hazard> colDetect;
+	private List<Collisionable> colDetect;
 	private List<Point> colPairs;
 	private List<Entity> destroyQueue;
 		
@@ -32,6 +34,7 @@ public final class Game {
 		if(instance == null) {
 			instance = new Game();
 			eI = EntityInstancer.getInstance();
+			
 		}
 		
 		return instance;
@@ -42,21 +45,12 @@ public final class Game {
 		if (test) {
 			eI.instance(EntityInstancer.ENT_PLAYER, iP);
 			test = false;
-		}
-		
-		if (InputHandler.getInstance().getInput(InputHandler.KEY_FOCUS) == 0) {
-			for (int i = 0; i < 2; i++) {
-				iP.rotation = 0;
-				iP.position = new Point2D.Double(-300 + Math.random() * 600, -200 + Math.random() * 400);
-				iP.scale = new Point2D.Double(50 , 43);
-
-				eI.instance(EntityInstancer.ENT_TEST, iP);
-			}
+			entities.add(new Background());
 		}
 		
 		updateEntities(delta);
 		updateCollision();
-		
+		destroy();
 		
 	}
 
@@ -70,33 +64,38 @@ public final class Game {
 			
 			ent.update(delta);	
 			
-			if (ent instanceof Hazard) 
-				if (((Hazard) ent).getCollider().isTarget() || ((Hazard) ent).getCollider().isHazard())
-					colDetect.add((Hazard) ent);
+			if (ent instanceof Collisionable) {
+				if (((Collisionable) ent).getCollider() != null)
+					if (((Collisionable) ent).getCollider().isTarget() || ((Collisionable) ent).getCollider().isHazard())
+						colDetect.add((Collisionable) ent);
+		
+			}
 		}
 	}
 	
 	public void updateCollision() {
-		int j;
+		int j, size;
 		colPairs.clear();
-		Hazard current, test;
+		Collisionable current, test;
 		Transform currentTrans, testTrans;
 		double distT, sumBoxes, boxOne, boxTwo;
-		for (int i = 0; i < colDetect.size(); i++) {
+		size = colDetect.size();
+		colDetect.sort(new Comp());
+		for (int i = 0; i < size; i++) {
 			j = i;
 			current = colDetect.get(i);
 			currentTrans = current.getTransform();
 			while (true) {
 				j++;
+				if (j >= size) break;
 				test = colDetect.get(j);
 				testTrans = test.getTransform();
-				
-				if (currentTrans.position.getX() + 2 * current.getCollider().getHitbox() > testTrans.position.getX()) 
-					if ((current.getCollider().getHazardFlags() & test.getCollider().getTargetFlags()) != 0 || (current.getCollider().getTargetFlags() & test.getCollider().getHazardFlags()) != 0) 
+				if(Math.abs(currentTrans.zPosition - testTrans.zPosition) > 2) continue;
+				if (currentTrans.position.getX() + current.getCollider().getHitbox() > testTrans.position.getX()) {
+					if ((current.getCollider().getHitFlags() & test.getCollider().getDamageFlags()) != 0 || (current.getCollider().getDamageFlags() & test.getCollider().getHitFlags()) != 0) 
 						colPairs.add(new Point(i, j));
-				else 
-					break;
-				
+				}
+				else break;
 			}
 		}
 		
@@ -105,23 +104,23 @@ public final class Game {
 			test = colDetect.get(pt.y);
 			distT = current.getTransform().position.distanceSq(test.getTransform().position);
 			
-			if ((current.getCollider().getHazardFlags() & test.getCollider().getTargetFlags()) != 0) {
+			if ((current.getCollider().getHitFlags() & test.getCollider().getDamageFlags()) != 0) {
 				boxOne = (current.getCollider().getDamagebox() * current.getTransform().scale);
 				boxTwo = (test.getCollider().getHitbox() * test.getTransform().scale);
 				sumBoxes = boxOne * boxOne + boxTwo * boxTwo;
 				
 				if (sumBoxes >= distT) {
-					current.onCollision(test);
+					test.onCollision(current);
 				}
 			}
 			
-			if ((current.getCollider().getTargetFlags() & test.getCollider().getHazardFlags()) != 0) {
+			if ((current.getCollider().getDamageFlags() & test.getCollider().getHitFlags()) != 0) {
 				boxOne = (current.getCollider().getHitbox() * current.getTransform().scale);
 				boxTwo = (test.getCollider().getDamagebox() * test.getTransform().scale);
 				sumBoxes = boxOne * boxOne + boxTwo * boxTwo;
 				
 				if (sumBoxes >= distT) {
-					test.onCollision(current);
+					current.onCollision(test);
 				}
 			}
 		}
@@ -144,10 +143,21 @@ public final class Game {
 		destroyQueue.clear();
 	}
 	
-	private class Comp implements Comparator<Hazard> {
+	public void debugDraw(Graphics2D g2) {
+		for (Entity ent : entities) {
+			if (ent.isDestroyed()) {
+				addToDestroy(ent);
+				continue;
+			}
+			g2.setColor(Color.red);
+			g2.drawOval((int) ent.getTransform().position.getX() + 640, (int) ent.getTransform().position.getY() + 480, 25, 25);
+		}
+	}
+	
+	private class Comp implements Comparator<Collisionable> {
 
 		@Override
-		public int compare(Hazard arg0, Hazard arg1) {
+		public int compare(Collisionable arg0, Collisionable arg1) {
 			double x0 = arg0.getTransform().position.getX();
 			double x1 = arg1.getTransform().position.getX();
 

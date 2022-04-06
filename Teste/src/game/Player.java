@@ -7,8 +7,9 @@ import engine.ImageBufferHandler;
 import engine.InputHandler;
 import misc.Transform;
 
-public class Player extends Entity{
+public class Player extends Entity implements Collisionable{
 
+	private Collider collider;
 	public Sprite sprite;
 	public static final Point2D DEFAULT_POS = new Point2D.Double(0, 0);
 	public static final int PLAYER_SPEED = 400;
@@ -23,11 +24,18 @@ public class Player extends Entity{
 		this.transform = new Transform(null, new Point2D.Double(50.0, 43.0), 1, 0 , 10.0);
 		if (input == null) input = InputHandler.getInstance();
 		this.sprite = new Sprite(this);
-
-		sprite.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_LIGHT1);
+		this.collider = new Collider();
+		this.collider.setDamageFlags(Collider.FLAG_PLAYER);
+		this.collider.setHitFlags(0);
+		this.collider.toggleHazard(true);
+		this.collider.toggleTarget(false);
+		this.collider.setHitbox(10);
+		this.collider.setDamagebox(0);
+		
+		this.sprite.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_BLUE1);
 		
 		this.transform.position.setLocation(DEFAULT_POS.getX(), DEFAULT_POS.getY());
-		
+		this.transform.zPosition = 10;
 		this.destroyed = false;
 	}
 
@@ -69,5 +77,18 @@ public class Player extends Entity{
 		if (!sprite.isDestroyed()) sprite.destroy();
 		sprite = null;
 		destroyed = true;
+	}
+
+	@Override
+	public Collider getCollider() {
+		
+		return collider;
+	}
+
+	@Override
+	public void onCollision(Collisionable collider) {
+		System.out.println("Hm");
+		collider.destroy();
+		
 	}
 }

@@ -1,6 +1,7 @@
 package engine;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -87,20 +88,23 @@ public final class Renderer {
 		g2.setComposite(ac);
 
 		gameBuffer2 = new PriorityQueue<>(gameBuffer);
-		
 		while (!gameBuffer2.isEmpty()) {
 			spr = gameBuffer2.poll();
 			if (spr.isDestroyed()) continue;
 			data = spr.getRenderInfo();
-			//System.out.println(data);
+			
 			if (data.visible) {
 				im = ImageBufferHandler.getImage(data.type, data.color, data.quality);
+				
 				if (data.alpha != alpha) {
 					ac = ac.derive(data.alpha); 
 					alpha = data.alpha;
 					g2.setComposite(ac);
 				}
-				
+				//System.out.println(data.at);
+
+				//g2.setColor(Color.red);
+				//g2.drawOval((int) data.at.getTranslateX(), (int) data.at.getTranslateY(), 10, 10);
 				g2.drawImage(im, data.at, null);
 			}
 		}

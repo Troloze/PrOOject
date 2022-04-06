@@ -60,7 +60,7 @@ public final class Sprite {
 		this.rotation = 0.0;
 		this.body = body;
 		this.offsetPosition = new Point2D.Double();
-		this.offsetScale = new Point2D.Double();
+		this.offsetScale = new Point2D.Double(1, 1);
 		this.offsetRotation = 0;
 		this.offsetZPosition = 0;
 		this.destroyed = false;
@@ -75,6 +75,7 @@ public final class Sprite {
 	}
 	
 	public void setOffset(Transform transform) {
+		//System.out.println(transform);
 		if (transform == null) {
 			offsetZPosition = 0.0;
 			offsetRotation = 0.0;
@@ -85,11 +86,11 @@ public final class Sprite {
 		}
 		offsetZPosition = transform.zPosition;
 		offsetRotation = transform.rotation;
-		offsetScale.setLocation(transform.scale, transform.scale);
-		offsetScale.setLocation(0, 0);
+		offsetScale.setLocation(transform.defaultScale.getX() * transform.scale, transform.defaultScale.getY() * transform.scale);
 		if (transform.position != null) offsetPosition.setLocation(transform.position);
-		offsetPosition.setLocation(0, 0);
+		else offsetPosition.setLocation(0, 0);
 	}
+	
 	
 	public void set(int type, int color) {
 		changeSprite(type);
@@ -115,11 +116,25 @@ public final class Sprite {
 	}
 	
 	private void updateBody() {
-		if (body == null) return;
+		if (body == null) {
+			scale.setLocation(offsetScale);
+			position.setLocation(offsetPosition);
+			rotation = offsetRotation;
+			zPosition = offsetZPosition;
+			return;
+		}
 		Transform transform = body.getTransform();
 		Point2D newScale = new Point2D.Double();
+		if (transform == null) {
+			position.setLocation(offsetPosition);
+			scale.setLocation(newScale.getX() + offsetScale.getX(), newScale.getY() + offsetScale.getY());
+			rotation = offsetRotation;
+			zPosition = offsetZPosition;
+			return;
+		}
 		if (transform.defaultScale != null) 
 			newScale.setLocation(transform.defaultScale.getX() * transform.scale, transform.defaultScale.getY() * transform.scale);
+		
 		scale.setLocation(newScale.getX() + offsetScale.getX(), newScale.getY() + offsetScale.getY());
 		
 		if (transform.position != null) position.setLocation(transform.position.getX() + offsetPosition.getX(), transform.position.getY() + offsetPosition.getY());
@@ -140,7 +155,8 @@ public final class Sprite {
 		double camPosX = cam.getX();
 		double camPosY = cam.getY();
 		double camPosZ = cam.getZ();
-		double zRate = (camPosZ - (40 - 40 * RenderSettings.PANEL_RATE));
+		
+		double zRate = (camPosZ - (RenderSettings.CAMERA_DISTANCE * (1 - RenderSettings.PANEL_RATE)));
 		if ((camPosZ - zPosition) > 1) {
 			zRate /= (camPosZ - zPosition);
 		}
@@ -159,7 +175,7 @@ public final class Sprite {
 			(position.getX() - camPosX) * zRate + screenSize.getX()/2.0,
 			(position.getY() - camPosY) * zRate + screenSize.getY()/2.0
 		);
-
+	
 	}
 	
 	private void updateData() {

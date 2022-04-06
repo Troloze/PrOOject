@@ -49,6 +49,7 @@ public class Transform {
 		
 	public Transform() {
 		this.position = new Point2D.Double();
+		this.defaultScale = new Point2D.Double();
 		this.scale = 1.0;
 		this.rotation = 0.0;
 		this.zPosition = 0.0;
@@ -65,4 +66,10 @@ public class Transform {
 		if ((flags & FOLLOW_ZPOS) != 0) 
 			this.zPosition = transform.zPosition;
 	}
+	
+	@Override
+	public String toString() {
+		return "Transform: [position: " + position + ", scale: " + scale + ", defaultScale: " + defaultScale + ", rotation: " + rotation + ", zPosition: " + zPosition + "]";
 	}
+	
+}

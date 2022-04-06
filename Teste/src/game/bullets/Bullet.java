@@ -1,17 +1,15 @@
 package game.bullets;
 
+import engine.SpriteHolder;
+import game.Collisionable;
 import game.Hazard;
+import game.Sprite;
 import misc.Transform;
 
-public class BulletTest extends Hazard {
+public abstract class Bullet extends Hazard implements SpriteHolder {
 
+	private Sprite sprite;
 	
-	
-	BulletTest() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public Transform getTransform() {
 		// TODO Auto-generated method stub
@@ -19,9 +17,8 @@ public class BulletTest extends Hazard {
 	}
 
 	@Override
-	public void onCollision(Hazard entity) {
+	public void onCollision(Collisionable entity) {
 		// TODO Auto-generated method stub
 
 	}
-
 }

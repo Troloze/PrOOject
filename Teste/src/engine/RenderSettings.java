@@ -11,4 +11,6 @@ public class RenderSettings {
 	public static final double BASE_TRIANGLE_HEIGHT = 43;
 	
 	public static final double BASE_BULLET_SIZE = 50;
+	
+	public static final double CAMERA_DISTANCE = 40.0;
 }

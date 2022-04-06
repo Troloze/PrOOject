@@ -1,6 +1,12 @@
 package game;
 
 public class Collider {
+	
+	public static final int FLAG_PLAYER = 1;
+	public static final int FLAG_ENEMY = 2;
+	public static final int FLAG_ENEMY_BULLET = 4;
+	public static final int FLAG_PLAYER_BULLET = 8;
+	public static final int FLAG_MISC = 16;
 	private double hitbox;
 	private double damagebox;
 	
@@ -14,8 +20,8 @@ public class Collider {
 		this.setHitbox(0);
 		this.setDamagebox(0);
 		
-		this.setHazardFlags(0);
-		this.setTargetFlags(0);
+		this.setHitFlags(0);
+		this.setDamageFlags(0);
 		
 		this.isHazard= false;
 		this.isTarget = false;
@@ -42,8 +48,8 @@ public class Collider {
 	public void update(Collider col) {
 		hitbox = col.getHitbox();
 		damagebox = col.getDamagebox();
-		hazardFlags = col.getHazardFlags();
-		targetFlags = col.getTargetFlags();
+		hazardFlags = col.getHitFlags();
+		targetFlags = col.getDamageFlags();
 		isHazard = col.isHazard();
 		isTarget = col.isTarget();
 	}
@@ -65,19 +71,19 @@ public class Collider {
 		this.damagebox = damagebox;
 	}
 
-	public int getHazardFlags() {
+	public int getHitFlags() {
 		return hazardFlags;
 	}
 
-	public void setHazardFlags(int hazardFlags) {
+	public void setHitFlags(int hazardFlags) {
 		this.hazardFlags = hazardFlags;
 	}
 
-	public int getTargetFlags() {
+	public int getDamageFlags() {
 		return targetFlags;
 	}
 
-	public void setTargetFlags(int targetFlags) {
+	public void setDamageFlags(int targetFlags) {
 		this.targetFlags = targetFlags;
 	}
 

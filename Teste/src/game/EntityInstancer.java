@@ -28,7 +28,7 @@ public final class EntityInstancer {
 				ent = Player.newInstance();
 			break;
 			case ENT_TEST:
-				ent = TestEntity.newInstance(params.rotation, params.position, params.scale);
+				
 		}
 		game.addEntity(ent);
 	}
