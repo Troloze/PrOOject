@@ -71,6 +71,7 @@ public final class MyPanel extends JPanel implements Runnable {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		renderer.render(g2);
+		
 		//Game.getInstance().debugDraw(g2);
 		//System.out.println((System.nanoTime() - c)/1000000000.0);
 		

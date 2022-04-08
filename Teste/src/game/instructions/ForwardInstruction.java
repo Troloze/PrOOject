@@ -3,11 +3,14 @@ package game.instructions;
 import java.awt.geom.Point2D;
 
 import game.Hazard;
-import game.Instruction;
 
 public final class ForwardInstruction extends Instruction {
 
 	private static ForwardInstruction instance;
+	
+	private ForwardInstruction() {
+		setup();
+	}
 	
 	public static ForwardInstruction getInstance() {
 		if (instance == null) {

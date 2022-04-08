@@ -1,9 +1,34 @@
-package game;
+package game.patterns;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import game.Hazard;
+import game.instructions.Instruction;
 
 public abstract class Pattern {
 
 
 	private Instruction onStart, onEnd, onDeath;
+	
+	Map<String, Object> arguments;
+	
+	protected void setup() {
+		arguments = new HashMap<>();
+	}
+	
+	protected Object readArgument(String key) {
+		if (key == null || arguments == null) return null;
+		return arguments.get(key);
+	}
+	
+	public void setArgument(String key, Object value) {
+		if (key == null || value == null || arguments == null) return; 
+		if (arguments.containsKey(key)) {
+			arguments.replace(key, value);
+		}
+		else arguments.put(key, value);
+	}
 	
 	public void onStart(Hazard entity) {
 		if (onStart != null) onStart.invoke(entity);

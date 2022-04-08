@@ -2,7 +2,7 @@ package game.bullets;
 
 import engine.SpriteHolder;
 import game.Hazard;
-import game.Pattern;
+import game.patterns.Pattern;
 
 public abstract class Bullet extends Hazard implements SpriteHolder {
 

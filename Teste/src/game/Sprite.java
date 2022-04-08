@@ -160,7 +160,7 @@ public final class Sprite {
 	private void updateZ() {
 		if (currentZPosition != zPosition) {
 			currentZPosition = zPosition;
-			Renderer.updateBuffer(this);
+			Renderer.updateBuffer();
 		}
 	}
 	
@@ -248,6 +248,7 @@ public final class Sprite {
 	}
 	
 	public void destroy() {
+		if (destroyed) return;
 		destroyed = true;
 		renderer.destroy(this);
 	}

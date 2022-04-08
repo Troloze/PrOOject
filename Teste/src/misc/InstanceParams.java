@@ -1,7 +1,7 @@
 package misc;
 
 
-import game.Pattern;
+import game.patterns.Pattern;
 
 public class InstanceParams {
 	public Transform transform = null;

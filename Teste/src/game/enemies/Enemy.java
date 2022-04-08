@@ -25,7 +25,7 @@ public class Enemy extends Hazard implements SpriteHolder {
 		this.collider.toggleTarget(true);
 		this.collider.setHitbox(43);
 		this.collider.setDamagebox(10);
-		this.life = 1;
+		this.life = 20;
 		this.spr = new Sprite(this);
 		this.pattern = TestEnemyPattern.getInstance();
 		this.spr.set(instPar.spriteData.type, instPar.spriteData.color);
@@ -44,17 +44,19 @@ public class Enemy extends Hazard implements SpriteHolder {
 
 	@Override
 	public void onCollision(Collisionable collider) {
-		hit(2);
+		hit(collider.getDamage());
 	}
 
 	@Override
 	public void update(double delta) {
+		
 		baseUpdate(delta);
 		transform.setRotation(transform.getRotation() + 200 * delta);
 	}
 
 	@Override
 	public void destroy() {
+		if (destroyed) return;
 		baseDestroy();
 		if (spr != null) spr.destroy();
 		spr = null;

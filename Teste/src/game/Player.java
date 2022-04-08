@@ -17,9 +17,11 @@ public class Player extends Entity implements Collisionable{
 	private static InputHandler input;
 	
 	private double shootCooldown;
+	private boolean isFocus = false;
+	
+	private Entity hitbox;
 	
 	public static Entity newInstance() {
-		
 		return new Player();
 	}
 	
@@ -42,14 +44,25 @@ public class Player extends Entity implements Collisionable{
 
 		this.destroyed = false;
 		this.shootCooldown = (System.nanoTime()/1000000000.0) + 0.1;
+
 	}
 
+	public void setHitbox(Entity hitbox) {
+		this.hitbox = hitbox;
+	}
+	
 	@Override
 	public void update(double delta) {		
 		if (destroyed) return;
 		double rate = 1;
 		if (input.getInput(InputHandler.KEY_FOCUS) == 1) {
 			rate = 0.4;
+			isFocus = true;
+			if (hitbox != null) ((PlayerHitbox) hitbox).show();
+		}
+		else {
+			isFocus = false;
+			if (hitbox != null) ((PlayerHitbox) hitbox).hide();
 		}
 		
 		if(input.getInput(InputHandler.KEY_UP) == 1) {
@@ -84,22 +97,40 @@ public class Player extends Entity implements Collisionable{
 			transform.getPosition().setLocation(transform.getPosition().getX(), 345);
 		}
 		
+		((PlayerHitbox) hitbox).move();
+		
 		if(shootCooldown < System.nanoTime()/1000000000.0) {
-			shootCooldown += 0.05;
+			shootCooldown += 0.08;
 			if(input.getInput(InputHandler.KEY_SHOOT) == 1) {
 				InstanceParams par = new InstanceParams();
 				par.transform = new Transform(transform);
-				par.transform.getPosition().setLocation(transform.getPosition().getX(), transform.getPosition().getY() - 10);
+				par.transform.getPosition().setLocation(
+						transform.getPosition().getX() + ((isFocus) ? -20 : -40), 
+						transform.getPosition().getY());
 				par.transform.getDefaultScale().setLocation(25, 25);
 				par.transform.setScale(1);
 				par.transform.setZPosition(10);
+				par.direction = (isFocus) ? 90 : 85;
 				
 				
-				EntityInstancer.getInstance().instance(EntityInstancer.ENT_PLAYER_BULLET, par);
+				
+				EntityInstancer.instance(EntityInstancer.ENT_PLAYER_BULLET, par);
+				
+				par.direction = isFocus ? 90 : 95;
+				par.transform.getPosition().setLocation(
+						transform.getPosition().getX() + ((isFocus) ? 20 : 40), 
+						transform.getPosition().getY());
+				EntityInstancer.instance(EntityInstancer.ENT_PLAYER_BULLET, par);
+				
+				par.direction = 90;
+				par.transform.getPosition().setLocation(
+						transform.getPosition().getX(), 
+						transform.getPosition().getY() + ((isFocus) ? -20 : 0));
+				EntityInstancer.instance(EntityInstancer.ENT_PLAYER_BULLET, par);
 			}
 		}
 		
-		if (input.getInput(InputHandler.KEY_BOMB) == 0) {
+		if (input.getInput(InputHandler.KEY_PAUSE) == 0) {
 			InstanceParams par = new InstanceParams();
 
 			par.transform = new Transform(transform);
@@ -113,7 +144,7 @@ public class Player extends Entity implements Collisionable{
 			par.spriteData.color = ImageBufferHandler.T_ORANGE1;
 			par.lifeTime = 10.0;
 			par.speed = 100;
-			EntityInstancer.getInstance().instance(EntityInstancer.ENT_TEST_ENEMY, par);
+			EntityInstancer.instance(EntityInstancer.ENT_TEST_ENEMY, par);
 		}
 		
 	}
@@ -125,7 +156,9 @@ public class Player extends Entity implements Collisionable{
 
 	@Override
 	public void destroy() {
-		if (!sprite.isDestroyed()) sprite.destroy();
+		if (destroyed) return;
+		if (sprite != null) sprite.destroy();
+		if (hitbox != null) hitbox.destroy();
 		sprite = null;
 		destroyed = true;
 	}
@@ -139,6 +172,13 @@ public class Player extends Entity implements Collisionable{
 	@Override
 	public void onCollision(Collisionable collider) {
 		//collider.destroy();
-		
+		System.out.println("Test");
 	}
+
+	@Override
+	public double getDamage() {
+		return 0;
+	}
+
+	
 }

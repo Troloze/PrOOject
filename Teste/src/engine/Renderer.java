@@ -21,15 +21,13 @@ public final class Renderer {
 	private static PriorityQueue<Sprite> gameBuffer = null;
 	private static PriorityQueue<Sprite> gameBuffer2 = null;
 	private static List<Sprite> testBuffer = null;
-	
-	private boolean updateNextFrame;
-	
+		
 	private static bufferComparator bC;
 	
 	private static boolean renderLock = false;
+	private static boolean toUpdate = false;
 	
 	private Renderer() {
-		updateNextFrame = false;
 		addQueue = new ArrayList<>();
 		updateQueue = new ArrayList<>();
 		destroyQueue = new ArrayList<>();
@@ -40,50 +38,34 @@ public final class Renderer {
 	
 	public void add(Sprite spr) {
 		if (spr == null) return;
-		if (!renderLock) {
-			//gameBuffer.add(spr);
-			testBuffer.add(spr);
-			return;
-		}
-		
 		addQueue.add(spr);
+		
+
 	}
 	
 	private void addQueued() {
 		for (Sprite spr : addQueue) {
-			add(spr);
+			testBuffer.add(spr);
 		}
 		addQueue.clear();
 	}
 
-	public static void updateBuffer(Sprite spr) {
-		if (spr == null) return;
-		if (!renderLock) {
-			testBuffer.sort(bC);
-			return;
-		}
-		updateQueue.add(spr);
+	public static void updateBuffer() {
+		toUpdate = true;
 	}
 	
-	private void updateQueued() {
-		for (Sprite spr : updateQueue) {
-			updateBuffer(spr);
-		}
-		updateQueue.clear();
+	public static void updateQueued() {
+		if (toUpdate) testBuffer.sort(bC);
 	}
-	
+		
 	public void destroy(Sprite spr) {
 		if (spr == null) return;
-		if (!renderLock) {
-			testBuffer.remove(spr);
-			return;
-		}
 		destroyQueue.add(spr);
 	}
 	
 	private void destroyQueued() {
 		for (Sprite spr : destroyQueue) {
-			destroy(spr);
+			testBuffer.remove(spr);
 		}
 		destroyQueue.clear();
 	}
@@ -92,10 +74,10 @@ public final class Renderer {
 		renderLock = true;
 		BufferedImage im;
 		ImageData data;
-		Sprite spr;
 		float alpha = 1.0f;
 		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		g2.setComposite(ac);
+		
 		/*
 		gameBuffer2 = new PriorityQueue<>(gameBuffer);
 		while (!gameBuffer2.isEmpty()) {
@@ -118,9 +100,10 @@ public final class Renderer {
 				g2.drawImage(im, data.at, null);
 			}
 		}/**/
-		for (Sprite sprt : testBuffer) {
-			if (sprt.isDestroyed()) continue;
-			data = sprt.getRenderInfo();
+		
+		for (Sprite spr : testBuffer) {
+			if (spr.isDestroyed()) continue;
+			data = spr.getRenderInfo();
 			
 			if (data.visible) {
 				im = ImageBufferHandler.getImage(data.type, data.color, data.quality);

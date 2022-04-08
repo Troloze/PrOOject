@@ -14,7 +14,6 @@ import misc.Transform;
 
 public final class Game {
 	private static Game instance;
-	private static EntityInstancer eI;
 	private static List<Entity> entities;
 	private static List<Entity> waitEntities;
 	private static List<Collisionable> colDetect;
@@ -36,7 +35,6 @@ public final class Game {
 	public static Game getInstance() {
 		if(instance == null) {
 			instance = new Game();
-			eI = EntityInstancer.getInstance();
 			
 		}
 		
@@ -46,7 +44,7 @@ public final class Game {
 	public void gameUpdate(double delta) {
 		InstanceParams iP = new InstanceParams();
 		if (test) {
-			eI.instance(EntityInstancer.ENT_PLAYER, iP);
+			EntityInstancer.instance(EntityInstancer.ENT_PLAYER, iP);
 			test = false;
 			entities.add(new Background());
 		}
@@ -59,6 +57,7 @@ public final class Game {
 	}
 
 	public void updateEntities(double delta) {
+		Collider col;
 		colDetect.clear();
 		updating = true;
 		for (Entity ent : entities) {
@@ -68,10 +67,11 @@ public final class Game {
 			}
 			
 			ent.update(delta);	
-			
+
 			if (ent instanceof Collisionable) {
-				if (((Collisionable) ent).getCollider() != null)
-					if (((Collisionable) ent).getCollider().isTarget() || ((Collisionable) ent).getCollider().isHazard())
+				col = ((Collisionable) ent).getCollider();
+				if (col != null)
+					if (col.isTarget() || col.isHazard())
 						colDetect.add((Collisionable) ent);
 		
 			}
