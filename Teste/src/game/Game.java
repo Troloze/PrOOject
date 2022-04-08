@@ -14,6 +14,10 @@ import misc.Transform;
 
 public final class Game {
 	private static Game instance;
+	
+	private GameStateHandler stateHandler;
+	private InputHandler input;
+	
 	private static List<Entity> entities;
 	private static List<Entity> waitEntities;
 	private static List<Collisionable> colDetect;
@@ -24,12 +28,14 @@ public final class Game {
 	private boolean updating = false;
 	
 	private Game() {
+		input = InputHandler.getInstance();
+		stateHandler = GameStateHandler.getInstance();
+		
 		entities = new ArrayList<>();
 		destroyQueue = new ArrayList<>();
 		colDetect = new ArrayList<>();
 		colPairs = new ArrayList<>();
 		waitEntities = new ArrayList<>();
-		//mainCharacter = MainCharacter.getInstance();
 	}
 	
 	public static Game getInstance() {
@@ -43,17 +49,23 @@ public final class Game {
 	
 	public void gameUpdate(double delta) {
 		InstanceParams iP = new InstanceParams();
+		
 		if (test) {
 			EntityInstancer.instance(EntityInstancer.ENT_PLAYER, iP);
 			test = false;
 			entities.add(new Background());
 		}
 		
-		updateEntities(delta);
-		addNewEntities();
-		updateCollision();
-		destroy();
-		
+		if(stateHandler.getState() == GameStateHandler.STATE_PLAYING) {
+			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_PAUSED);
+			updateEntities(delta);
+			addNewEntities();
+			updateCollision();
+			destroy();
+		} else {
+			updateEntities(delta);
+			stateHandler.updateState();
+		}
 	}
 
 	public void updateEntities(double delta) {
