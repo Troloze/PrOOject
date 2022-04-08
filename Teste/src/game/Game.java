@@ -18,14 +18,15 @@ public final class Game {
 	private GameStateHandler stateHandler;
 	private InputHandler input;
 	
+	private static int score = 0;
+		
 	private static List<Entity> entities;
 	private static List<Entity> waitEntities;
 	private static List<Collisionable> colDetect;
 	private static List<Point> colPairs;
 	private static List<Entity> destroyQueue;
 		
-	private boolean test = true;
-	private boolean updating = false;
+	private static Entity background;
 	
 	private Game() {
 		input = InputHandler.getInstance();
@@ -36,42 +37,54 @@ public final class Game {
 		colDetect = new ArrayList<>();
 		colPairs = new ArrayList<>();
 		waitEntities = new ArrayList<>();
+		
+		background = new Background();
+		entities.add(background);
 	}
 	
 	public static Game getInstance() {
 		if(instance == null) {
 			instance = new Game();
-			
 		}
 		
 		return instance;
 	}
 	
-	public void gameUpdate(double delta) {
-		InstanceParams iP = new InstanceParams();
-		
-		if (test) {
-			EntityInstancer.instance(EntityInstancer.ENT_PLAYER, iP);
-			test = false;
-			entities.add(new Background());
-		}
-		
-		if(stateHandler.getState() == GameStateHandler.STATE_PLAYING) {
-			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_PAUSED);
-			updateEntities(delta);
-			addNewEntities();
-			updateCollision();
-			destroy();
-		} else {
-			updateEntities(delta);
-			stateHandler.updateState();
+	public void startGame() {
+		score = 0;
+		EntityInstancer.instance(EntityInstancer.ENT_PLAYER, null);
+	}
+	
+	public void destroyAll() {
+		for(Entity ent : entities) {
+			if (background == ent) continue;
+			ent.destroy();
 		}
 	}
+	
+	public void gameUpdate(double delta) {
+
+		
+		if(GameStateHandler.getState() == GameStateHandler.STATE_PLAYING) {
+			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_PAUSED);
+			updateEntities(delta);
+			updateCollision();
+			destroy();
+			addNewEntities();
+			score += (int) (1000.0 * delta);
+		} else {
+			//updateEntities(delta);
+			if (GameStateHandler.getState() != GameStateHandler.STATE_PAUSED) background.update(delta); 
+			stateHandler.updateState();
+		}
+		
+		
+	}
+
 
 	public void updateEntities(double delta) {
 		Collider col;
 		colDetect.clear();
-		updating = true;
 		for (Entity ent : entities) {
 			if (ent.isDestroyed()) {
 				addToDestroy(ent);
@@ -88,7 +101,6 @@ public final class Game {
 		
 			}
 		}
-		updating = false;
 	}
 	
 	public void updateCollision() {
@@ -166,6 +178,14 @@ public final class Game {
 			entities.remove(ent);
 		}
 		destroyQueue.clear();
+	}
+	
+	public static int getScore() {
+		return score;
+	}
+	
+	public static void addScore(int i) {
+		score += i;
 	}
 	
 	public void debugDraw(Graphics2D g2) {

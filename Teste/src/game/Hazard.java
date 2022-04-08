@@ -55,6 +55,7 @@ public abstract class Hazard extends Entity implements Collisionable{
 	
 	protected void updateInstanceData(InstanceParams par) {
 		if (par == null) return;
+
 		this.rotationSpeed = par.rotationSpeed;
 		this.rotationAcceleration = par.rotationAcceleration;
 		this.rotationDrag = par.rotationDrag;
@@ -65,11 +66,14 @@ public abstract class Hazard extends Entity implements Collisionable{
 		this.lifeTime = par.lifeTime;
 		if (par.transform != null) this.transform = new Transform(par.transform);
 		else this.transform = new Transform();
+		
+
+		if (this.pattern != null) return;
 		this.pattern = par.pattern;
-		this.pattern.onStart(this);
+		if (this.pattern != null) this.pattern.onStart(this);
 	}
 	
-	private void updateStats() {
+	private void updateStats(double delta) {
 		double accelResultant;
 		double oldSpeed;
 		
@@ -77,31 +81,33 @@ public abstract class Hazard extends Entity implements Collisionable{
 		if (rotationSpeed > 0) {
 			accelResultant = rotationAcceleration - rotationDrag;
 
-			rotationSpeed += accelResultant;
-			if (oldSpeed >= 0 && rotationSpeed < 0) 
+			rotationSpeed += accelResultant * delta;
+			if (oldSpeed >= 0 && rotationSpeed < 0 && Math.abs(rotationDrag) > Math.abs(rotationAcceleration)) 
 				rotationSpeed = 0;
 		}
 		else {
 			accelResultant = rotationAcceleration + rotationDrag;
-			rotationSpeed += accelResultant;
+			rotationSpeed += accelResultant * delta;
 			
-			if (oldSpeed <= 0 && rotationSpeed > 0) 
+			if (oldSpeed <= 0 && rotationSpeed > 0 && Math.abs(rotationDrag) > Math.abs(rotationAcceleration)) 
 				rotationSpeed = 0;
 		}
+		
+		direction += rotationSpeed * delta;
 				
 		oldSpeed = speed;
 		if (speed > 0) {
 			accelResultant = acceleration - drag;
 
-			speed += accelResultant;
-			if (oldSpeed >= 0 && speed < 0) 
+			speed += accelResultant * delta;
+			if (oldSpeed >= 0 && speed < 0 && Math.abs(drag) > Math.abs(acceleration)) 
 				speed = 0;
 		}
 		else {
 			accelResultant = acceleration + drag;
-			speed += accelResultant;
 			
-			if (oldSpeed <= 0 && speed > 0) 
+			speed += accelResultant * delta;
+			if (oldSpeed <= 0 && speed > 0 && Math.abs(drag) > Math.abs(acceleration)) 
 				speed = 0;
 		}
 		
@@ -126,7 +132,7 @@ public abstract class Hazard extends Entity implements Collisionable{
 	protected void baseUpdate(double delta) {
 		if (!alive) return;
 		double currentTime = System.nanoTime()/Misc.Other.nanoSecond;
-		updateStats();
+		updateStats(delta);
 		
 		if (pattern != null) pattern.cast(this, startTime, currentTime, delta);
 		if (currentTime >= startTime + lifeTime) destroy();

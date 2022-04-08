@@ -18,6 +18,7 @@ public class PlayerHitbox extends Entity {
 		transform = new Transform();
 		transform.getDefaultScale().setLocation(20, 20);
 		spr = new Sprite(this);
+		spr.setAlpha(0.0f);
 		spr.set(ImageBufferHandler.SHINE, ImageBufferHandler.B_ORANGE);
 	}
 	

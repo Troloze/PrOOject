@@ -170,7 +170,9 @@ public class GameStateHandler {
 	}
 	
 	public void start() {
+		
 		setState(STATE_PLAYING);
+		Game.getInstance().startGame();
 	}
 	
 	public void resume() {
@@ -179,6 +181,7 @@ public class GameStateHandler {
 	}
 	
 	public void returnToMain() {
+		Game.getInstance().destroyAll();
 		MenuElement.setDefault();
 		setState(STATE_MAIN_MENU);
 	}
@@ -198,7 +201,8 @@ public class GameStateHandler {
 	}
 	
 	public void gameOver() {
-		if(rankList.isEligible()) {
+		Game.getInstance().destroyAll();
+		if(rankList.isEligible()) {	
 			setState(STATE_INSERTING);
 		} else {
 			setState(STATE_RANKING);

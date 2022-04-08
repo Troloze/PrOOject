@@ -12,11 +12,14 @@ public class Player extends Entity implements Collisionable{
 
 	private Collider collider;
 	public Sprite sprite;
-	public static final Point2D DEFAULT_POS = new Point2D.Double(0, 0);
+	public static final Point2D DEFAULT_POS = new Point2D.Double(0, 200);
 	public static final int PLAYER_SPEED = 400;
 	private static InputHandler input;
 	
+	private int blinkTime;
+	private double downTime = 1.0;
 	private double shootCooldown;
+	private double hitCooldown = 0.0;
 	private boolean isFocus = false;
 	
 	private Entity hitbox;
@@ -55,6 +58,22 @@ public class Player extends Entity implements Collisionable{
 	public void update(double delta) {		
 		if (destroyed) return;
 		double rate = 1;
+		if (hitCooldown > 0) {
+			hitCooldown -= delta;
+			blinkTime++;
+			if (blinkTime == 5) {
+				sprite.setAlpha(0.0f);
+			}
+			if (blinkTime == 10) {
+				sprite.setAlpha(1.0f);
+				blinkTime = 0;
+			}
+			if (hitCooldown < 0)  {
+				sprite.setAlpha(1.0f);
+				blinkTime = 0;
+				hitCooldown = 0;
+			}
+		}
 		if (input.getInput(InputHandler.KEY_FOCUS) == 1) {
 			rate = 0.4;
 			isFocus = true;
@@ -130,7 +149,7 @@ public class Player extends Entity implements Collisionable{
 			}
 		}
 		
-		if (input.getInput(InputHandler.KEY_PAUSE) == 0) {
+		if (input.getInput(InputHandler.KEY_FOCUS) == 0) {
 			InstanceParams par = new InstanceParams();
 
 			par.transform = new Transform(transform);
@@ -172,7 +191,10 @@ public class Player extends Entity implements Collisionable{
 	@Override
 	public void onCollision(Collisionable collider) {
 		//collider.destroy();
-		System.out.println("Test");
+		if (hitCooldown > 0.0) return;
+		
+		hitCooldown = downTime;
+		System.out.println(Game.getScore());
 	}
 
 	@Override
