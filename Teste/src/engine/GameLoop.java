@@ -15,16 +15,16 @@ public final class GameLoop {
 		game = Game.getInstance();
 	}
 	
-	public void startLoop() {
-		gameThread = new Thread(MyPanel.getInstance());
-		gameThread.start();	
-	}
-	
 	public static GameLoop getInstance() {
 		if (instance == null) {
 			instance = new GameLoop();
 		}
 		return instance;
+	}
+	
+	public void startLoop() {
+		gameThread = new Thread(MyPanel.getInstance());
+		gameThread.start();	
 	}
 	
 	public void loop() {

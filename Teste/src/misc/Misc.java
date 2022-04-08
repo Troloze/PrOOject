@@ -1,7 +1,11 @@
 package misc;
 
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+
+import engine.RenderSettings;
 
 public final class Misc {
 	

@@ -17,7 +17,6 @@ public final class InputHandler extends JComponent{
 	private static final long serialVersionUID = 5912494406317256638L;
 	
 	private static InputHandler instance;
-	//private static MouseHandler mouseHandler;
 	private static KeyboardHandler keyHandler;
 	
 	private static Map<Integer, Integer> inputStatus = new HashMap<>();
@@ -31,10 +30,6 @@ public final class InputHandler extends JComponent{
 	public static final int KEY_PAUSE = 6;
 	public static final int KEY_FOCUS = 7;
 	
-	//public static final int MOUSE_LEFT = 0b100;
-	//public static final int MOUSE_MIDDLE = 0b010;
-	//public static final int MOUSE_RIGHT = 0b001;
-	
 	public static final int KEY_JUST_PRESSED = 0;
 	public static final int KEY_PRESSED = 1;
 	public static final int KEY_JUST_RELEASED = 2;
@@ -45,10 +40,8 @@ public final class InputHandler extends JComponent{
 	}
 	
 	private static void setup() {
-		//mouseHandler = MouseHandler.getInstance();
 		keyHandler = KeyboardHandler.getInstance();
 				
-		//this.addMouseListener(mouseHandler);
 		instance.addKeyListener(keyHandler);
 			
 		for (int i = 0; i < 8; i++) {
@@ -65,8 +58,6 @@ public final class InputHandler extends JComponent{
 	}
 	
 	public void updateInputStatus() {
-		/*if (getMousePosition() != null)
-			System.out.printf("%d, %d\n", getMousePosition().x, getMousePosition().y);*/
 		if (keyHandler.getKeyStatus(KeyEvent.VK_UP) == 1 || keyHandler.getKeyStatus(KeyEvent.VK_W) == 1)
 			setInput(KEY_UP, true);
 		else 
@@ -190,72 +181,4 @@ public final class InputHandler extends JComponent{
 		}
 
 	}
-
-	/*
-	public final class MouseHandler implements MouseListener{
-
-		private static InputHandler.MouseHandler instance;
-		private static InputHandler inputHandler;
-		private Point mousePosition;
-		
-		private int mouseStatus = 0;
-		
-		private MouseHandler() {
-			
-		}
-		
-		public static MouseHandler getInstance() {
-			if (instance == null) {
-				inputHandler = InputHandler.getInstance();
-				instance = inputHandler.new MouseHandler();
-			}
-			return instance;
-		}
-		
-		public void updateMousePosition() {
-			mousePosition = MouseInfo.getPointerInfo().getLocation();
-		}
-		
-		public Point getMousePosition() {
-			return mousePosition;
-		}
-		
-		public int getMouseButton(int key) {
-			return mouseStatus & key;
-		}
-			
-		@Override
-		public void mouseClicked(MouseEvent e) {}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (SwingUtilities.isLeftMouseButton(e)) 
-				mouseStatus = mouseStatus | 0b100;
-			
-			if (SwingUtilities.isRightMouseButton(e)) 
-				mouseStatus = mouseStatus | 0b010;
-			
-			if (SwingUtilities.isMiddleMouseButton(e)) 
-				mouseStatus = mouseStatus | 0b001;
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			if (SwingUtilities.isLeftMouseButton(e)) 
-				mouseStatus = mouseStatus & 0b011;
-			
-			if (SwingUtilities.isRightMouseButton(e)) 
-				mouseStatus = mouseStatus & 0b101;
-			
-			if (SwingUtilities.isMiddleMouseButton(e)) 
-				mouseStatus = mouseStatus & 0b110;
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {}
-
-		@Override
-		public void mouseExited(MouseEvent e) {}
-
-	}/**/
 }

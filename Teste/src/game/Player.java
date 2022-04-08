@@ -7,12 +7,13 @@ import engine.InputHandler;
 
 public class Player extends Entity{
 
-	public Sprite sprite;
 	public static final Point2D DEFAULT_POS = new Point2D.Double(0, 0);
 	public static final int PLAYER_SPEED = 400;
-	private static InputHandler input;
 	
+	public Sprite sprite;
 	public Point2D scale;
+	
+	private static InputHandler input;
 	
 	public static Entity newInstance() {
 		

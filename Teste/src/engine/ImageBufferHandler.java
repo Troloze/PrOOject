@@ -130,6 +130,13 @@ public final class ImageBufferHandler {
 		file = FileHandler.getInstance();
 	}
 	
+	public static ImageBufferHandler getInstance() {
+		if (instance == null) {
+			instance = new ImageBufferHandler();
+		}
+		return instance;
+	}
+	
 	public static void getImageData(ImageData ret, int bullet, double scale) {
 		ret.type = bullet;
 		switch (bullet) {
@@ -190,13 +197,6 @@ public final class ImageBufferHandler {
 				ret.offset = BULLET_CENTER_OFFSET;
 			break;
 		}
-	}
-	
-	public static ImageBufferHandler getInstance() {
-		if (instance == null) {
-			instance = new ImageBufferHandler();
-		}
-		return instance;
 	}
 	
 	public static BufferedImage getImage(int type, int color, int quality) {

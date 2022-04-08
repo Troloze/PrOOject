@@ -1,24 +1,27 @@
 package engine;
 
 import java.io.File;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class MyFileReader {
+	
 	private static MyFileReader instance;
 	
 	private MyFileReader() {
 		
 	}
-	
-	// Singleton;
 	
 	public static MyFileReader getInstance() {
 		if(instance == null) {
@@ -28,20 +31,44 @@ public class MyFileReader {
 		return instance;
 	}
 	
-	// Methods;
-	
 	public Image loadImage(String directory) {
 		Image image = new ImageIcon(directory).getImage();
-		return image;
-	}	
-	
-	public String toString(BufferedReader fileToRead) {
 		
-		String text;
+		return image;
+	}
+	
+	public Font loadFont(String directory) {
+		Font font;
+		try {
+			InputStream is = new FileInputStream(directory);
+			font = Font.createFont(Font.TRUETYPE_FONT, is);
+			return font;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FontFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public ArrayList<String> readFile(BufferedReader fileToRead) {
+		
+		ArrayList<String> text = new ArrayList<>();
+		String aux;
 		
 		try {
-			text = fileToRead.readLine();
+			while((aux = fileToRead.readLine()) != null) {
+				text.add(aux);
+			}
+			
 			fileToRead.close();
+			
 			return text;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

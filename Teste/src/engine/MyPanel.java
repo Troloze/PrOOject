@@ -9,6 +9,9 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
 import game.Game;
+import game.GameStateHandler;
+import game.MenuElement;
+import misc.Misc;
 
 public final class MyPanel extends JPanel implements Runnable {
 	
@@ -24,15 +27,15 @@ public final class MyPanel extends JPanel implements Runnable {
 		return FPS;
 	}
 	
-	private InputHandler input;
+	private GameStateHandler stateHandler;
 	private GameLoop gameLoop;
-	private Game game;
 	private Renderer renderer;
+	private InputHandler input;
 	
 	private MyPanel() {
+		stateHandler = GameStateHandler.getInstance();
 		gameLoop = GameLoop.getInstance();
 		input = InputHandler.getInstance();
-		game = Game.getInstance();
 		renderer = Renderer.getInstance();
 		
 		this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
@@ -63,7 +66,6 @@ public final class MyPanel extends JPanel implements Runnable {
 	
 	public void paint(Graphics g) {
 		g.setColor(new Color(0x1C, 0x1C, 0x27));
-		//g.setColor(Color.black);
 		g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
 		
 		long c = System.nanoTime();
@@ -72,6 +74,8 @@ public final class MyPanel extends JPanel implements Runnable {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		renderer.render(g2);
+		
+		stateHandler.draw(g2);
 				
 		//System.out.println((System.nanoTime() - c)/1000000000.0);
 		
