@@ -16,23 +16,20 @@ public final class Game {
 	private static Game instance;
 	private static EntityInstancer eI;
 	private static List<Entity> entities;
+	private static List<Entity> waitEntities;
 	private static List<Collisionable> colDetect;
 	private static List<Point> colPairs;
 	private static List<Entity> destroyQueue;
-	
-	private static Entity background;
-	
-	public static Entity getBackground() {
-		return background;
-	}
 		
 	private boolean test = true;
+	private boolean updating = false;
 	
 	private Game() {
 		entities = new ArrayList<>();
 		destroyQueue = new ArrayList<>();
 		colDetect = new ArrayList<>();
 		colPairs = new ArrayList<>();
+		waitEntities = new ArrayList<>();
 		//mainCharacter = MainCharacter.getInstance();
 	}
 	
@@ -51,11 +48,11 @@ public final class Game {
 		if (test) {
 			eI.instance(EntityInstancer.ENT_PLAYER, iP);
 			test = false;
-			background = new Background();
-			entities.add(background);
+			entities.add(new Background());
 		}
 		
 		updateEntities(delta);
+		addNewEntities();
 		updateCollision();
 		destroy();
 		
@@ -63,6 +60,7 @@ public final class Game {
 
 	public void updateEntities(double delta) {
 		colDetect.clear();
+		updating = true;
 		for (Entity ent : entities) {
 			if (ent.isDestroyed()) {
 				addToDestroy(ent);
@@ -78,6 +76,7 @@ public final class Game {
 		
 			}
 		}
+		updating = false;
 	}
 	
 	public void updateCollision() {
@@ -135,7 +134,14 @@ public final class Game {
 	
 	public void addEntity(Entity ent) {
 		if (ent == null) return;
-		entities.add(ent);
+		waitEntities.add(ent);
+	}
+	
+	public void addNewEntities() {
+		for(Entity i : waitEntities) {
+			entities.add(i);
+		}
+		waitEntities.clear();
 	}
 	
 	public void addToDestroy(Entity ent) {

@@ -17,7 +17,7 @@ public class Background extends Entity implements SpriteHolder {
 
 	
 	private static final int sizeX = 27;
-	private static final int sizeY = 11;
+	private static final int sizeY = 13;
 	private Map<Point, Sprite> tiles;
 	private double newTileThreshold;
 	private int newTileYValue;
@@ -25,12 +25,13 @@ public class Background extends Entity implements SpriteHolder {
 	public Background() {
 		transform = new Transform();
 		transform.getDefaultScale().setLocation(1, 1);
+		transform.setZPosition(0);
 		tiles = new HashMap<>();
 		for (int j = -sizeY; j < sizeY; j++) {
 			generateLine(j);
 		}
 		
-		newTileYValue = 11;
+		newTileYValue = sizeY;
 		newTileThreshold = 43;
 	}
 	
@@ -39,18 +40,38 @@ public class Background extends Entity implements SpriteHolder {
 		Sprite spr;
 		trans.setScale(1.01);
 		trans.getDefaultScale().setLocation(50, 43);
-		trans.setZPosition(5);
+		trans.setZPosition(0);
 		Point p;
 		for (int i = - sizeX; i < sizeX; i++) {
 			p = new Point(i, y);
-			trans.getPosition().setLocation(i * 25, (-y * 43) + ((i%2 == 0 ^ y%2 == 0) ? -43.0/3.0 : 0));
-			trans.setRotation(((i%2 == 0) ^ (y%2 == 0)) ? 180 : 0);
+			trans.getPosition().setLocation(getPosition(p));
+			trans.setRotation((getRotation(p)));
 			spr = new Sprite(this);
 			spr.setOffset(trans);
-			spr.setAlpha(0.5f);
-			spr.set(ImageBufferHandler.TRIANGLE, (i%2 == 0 ^ y%2 == 0) ? ImageBufferHandler.T_GRAY1 : ImageBufferHandler.T_GRAY2);
+			spr.set(ImageBufferHandler.TRIANGLE, (getType(p)) ? ImageBufferHandler.T_GRAY1 : ImageBufferHandler.T_GRAY2);
 			tiles.put(p, spr);			
 		}
+	}
+	
+	private Point2D getPosition(Point source) {
+		return new Point2D.Double(source.getX() * 25, (-source.getY() * 43) + (isDown(source) ? -43.0/3.0 : 0));
+	}
+	
+	private double getRotation(Point source) { 		
+		return (isDown(source)) ? 180 : 0;
+	}
+	
+	private boolean getType(Point source) {
+		return (isDown(source)) ? true : false;
+	}
+	
+	private boolean isDown(Point source) {
+		Point t = new Point();
+		t.setLocation(
+				(source.getX() < 0) ? - source.getX() : source.getX(),
+				(source.getY() < 0) ? - source.getY() : source.getY()
+				);
+		return (t.getX()%2 != t.getY()%2);
 	}
 	
 	private void destroyLine(int y) {
@@ -69,7 +90,7 @@ public class Background extends Entity implements SpriteHolder {
 		spr = tiles.get(point);
 		if (spr == null) return null;
 		tiles.remove(point);
-		spr.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_LIGHT1);
+		spr.set(ImageBufferHandler.TRIANGLE, ImageBufferHandler.T_ORANGE1);
 		spr.setAlpha(1.0f);
 		return spr;
 	}
@@ -79,7 +100,7 @@ public class Background extends Entity implements SpriteHolder {
 		Sprite[] ret = new Sprite[it.length];
 		Point p = new Point();
 		for (int i = 0; i < it.length; i++) {
-			p.setLocation(center.getX() + it[i][0], center.getY() + ((isDown) ? (-it[i][1]) : it[i][1]));
+			p.setLocation(center.getX() + it[i][0], center.getY() + ((isDown) ? (it[i][1]) : it[i][1]));
 			
 			ret[i] = pop(p);
 			if (ret[i] == null) return null;
@@ -102,28 +123,28 @@ public class Background extends Entity implements SpriteHolder {
 		}
 		return true;
 	}
-	
-	public Cluster getEnemy(Point orig, ShapeData sd) {
+		
+	private Cluster getEnemy(Point orig, ShapeData sd) {
 		if (sd == null || orig == null) return null;
 		Point p = new Point();
+		
 		List<Point> coords = new ArrayList<>();
 		List<Sprite> sprites = new ArrayList<>();
 		List<Transform> transf = new ArrayList<>();
-		Point2D worldPos = Misc.Background.back2World(transform.getPosition(), orig);
-		Transform newTrans = new Transform(transform);
-		newTrans.getPosition().setLocation(worldPos);
+		
 		int[][][] iterate;
 		int[][] toIterate;
 		int[][] toReturn;
 		int n, k;
 		Sprite[] spriteList;
+		boolean isDown = (isDown(orig));
+		if (isDown) orig.setLocation(orig.getX(), orig.getY() + 1);
+		isDown = false;
+		Point2D worldPos = getPosition(orig);
+		Transform newTrans = new Transform(transform);
+		newTrans.getPosition().setLocation(worldPos);
+		
 		Cluster retCluster = new Cluster(newTrans);
-		p.setLocation(
-				(orig.getX() < 0) ? - orig.getX() : orig.getX(),
-				(orig.getY() < 0) ? - orig.getY() : orig.getY()
-		);
-		boolean isDown = (p.getX()%2 != p.getY()%2);
-
 
 		iterate = sd.shape;
 		toReturn = iterate[0];
@@ -141,13 +162,10 @@ public class Background extends Entity implements SpriteHolder {
 					newTrans.getDefaultScale().setLocation(50, 43);
 					p = new Point();
 					p.setLocation(toReturn[i][0], toReturn[i][1]);
-					worldPos = Misc.Background.back2World(null, p);
+					worldPos = getPosition(p);
 					newTrans.getPosition().setLocation(worldPos);
 					coords.add(p);
-					p.setLocation(
-							(p.getX() < 0) ? - p.getX() : p.getX(),
-							(p.getY() < 0) ? - p.getY() : p.getY());
-					newTrans.setRotation(((p.getX()%2 != p.getY()%2)? 180 : 0));
+					newTrans.setRotation(getRotation(p));
 					sprites.add(spriteList[i]);
 					transf.add(newTrans);
 				}
@@ -157,13 +175,14 @@ public class Background extends Entity implements SpriteHolder {
 			k++;
 		}
 		retCluster.generateCluster(sd.size, coords, sprites, transf);
-		retCluster.offsetCenter(new Point2D.Double(sd.offsetX[n], sd.offsetY[n]));
 		retCluster.getTransform().setRotation(sd.angle[n]);
+		retCluster.offsetCenter(new Point2D.Double(/*50 * sd.offsetX[n], ((isDown) ? -1 : 1) * 43 * sd.offsetY[n]/**/));
 
 		return retCluster;
 	}
-	
-	public Cluster getEnemyFromScreen(Point2D orig, ShapeData sd) {
+	// Nunca usar nenhuma dessas duas, não houve tempo o suficiente pra resolver todos os problemas!!
+	@SuppressWarnings("unused")
+	private Cluster getEnemyFromScreen(Point2D orig, ShapeData sd) {
 		return getEnemy(Misc.Background.world2Back(transform.getPosition(), orig), sd);
 	}
 	
@@ -185,8 +204,12 @@ public class Background extends Entity implements SpriteHolder {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
+		for (Sprite spr : tiles.values()) {
+			if (spr != null) spr.destroy();
+		}
+		tiles.clear();
+		tiles = null;
+		destroyed = true;
 	}
 
 }

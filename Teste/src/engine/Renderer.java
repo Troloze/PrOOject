@@ -20,22 +20,32 @@ public final class Renderer {
 	private static List<Sprite> destroyQueue = null;
 	private static PriorityQueue<Sprite> gameBuffer = null;
 	private static PriorityQueue<Sprite> gameBuffer2 = null;
+	private static List<Sprite> testBuffer = null;
+	
+	private boolean updateNextFrame;
+	
+	private static bufferComparator bC;
 	
 	private static boolean renderLock = false;
 	
 	private Renderer() {
+		updateNextFrame = false;
 		addQueue = new ArrayList<>();
 		updateQueue = new ArrayList<>();
 		destroyQueue = new ArrayList<>();
-		gameBuffer = new PriorityQueue<>(100, new bufferComparator());
+		bC = new bufferComparator();
+		gameBuffer = new PriorityQueue<>(100, bC);
+		testBuffer = new ArrayList<>();
 	}
 	
 	public void add(Sprite spr) {
 		if (spr == null) return;
 		if (!renderLock) {
-			gameBuffer.add(spr);
+			//gameBuffer.add(spr);
+			testBuffer.add(spr);
 			return;
 		}
+		
 		addQueue.add(spr);
 	}
 	
@@ -49,7 +59,7 @@ public final class Renderer {
 	public static void updateBuffer(Sprite spr) {
 		if (spr == null) return;
 		if (!renderLock) {
-			if (gameBuffer.remove(spr)) gameBuffer.add(spr);
+			testBuffer.sort(bC);
 			return;
 		}
 		updateQueue.add(spr);
@@ -65,7 +75,7 @@ public final class Renderer {
 	public void destroy(Sprite spr) {
 		if (spr == null) return;
 		if (!renderLock) {
-			gameBuffer.remove(spr);
+			testBuffer.remove(spr);
 			return;
 		}
 		destroyQueue.add(spr);
@@ -86,7 +96,7 @@ public final class Renderer {
 		float alpha = 1.0f;
 		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		g2.setComposite(ac);
-
+		/*
 		gameBuffer2 = new PriorityQueue<>(gameBuffer);
 		while (!gameBuffer2.isEmpty()) {
 			spr = gameBuffer2.poll();
@@ -107,6 +117,23 @@ public final class Renderer {
 				//g2.drawOval((int) data.at.getTranslateX(), (int) data.at.getTranslateY(), 10, 10);
 				g2.drawImage(im, data.at, null);
 			}
+		}/**/
+		for (Sprite sprt : testBuffer) {
+			if (sprt.isDestroyed()) continue;
+			data = sprt.getRenderInfo();
+			
+			if (data.visible) {
+				im = ImageBufferHandler.getImage(data.type, data.color, data.quality);
+				
+				if (data.alpha != alpha) {
+					ac = ac.derive(data.alpha); 
+					alpha = data.alpha;
+					g2.setComposite(ac);
+				}
+				
+				g2.drawImage(im, data.at, null);
+			}
+			
 		}
 		renderLock = false;
 		addQueued();

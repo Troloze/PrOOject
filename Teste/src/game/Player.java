@@ -1,11 +1,11 @@
 package game;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import engine.ImageBufferHandler;
 import engine.InputHandler;
-import misc.ShapeData;
+import game.patterns.TestEnemyPattern;
+import misc.InstanceParams;
 import misc.Transform;
 
 public class Player extends Entity implements Collisionable{
@@ -15,6 +15,8 @@ public class Player extends Entity implements Collisionable{
 	public static final Point2D DEFAULT_POS = new Point2D.Double(0, 0);
 	public static final int PLAYER_SPEED = 400;
 	private static InputHandler input;
+	
+	private double shootCooldown;
 	
 	public static Entity newInstance() {
 		
@@ -37,7 +39,9 @@ public class Player extends Entity implements Collisionable{
 		
 		this.transform.getPosition().setLocation(DEFAULT_POS.getX(), DEFAULT_POS.getY());
 		this.transform.setZPosition(10);
+
 		this.destroyed = false;
+		this.shootCooldown = (System.nanoTime()/1000000000.0) + 0.1;
 	}
 
 	@Override
@@ -63,12 +67,55 @@ public class Player extends Entity implements Collisionable{
 		if(input.getInput(InputHandler.KEY_RIGHT) == 1) {
 			transform.getPosition().setLocation(transform.getPosition().getX() + (PLAYER_SPEED * delta * rate), transform.getPosition().getY());
 		}
-		if (input.getInput(InputHandler.KEY_SHOOT) == 0) {
-			Cluster c;
-			c = ((Background) Game.getBackground()).getEnemyFromScreen(transform.getPosition(), ShapeData.MEGA_CRYSTAL);
-			c.getTransform().setZPosition(0);
-			//System.out.println(c.getTransform());
+		
+		if (transform.getPosition().getX() < -455) {
+			transform.getPosition().setLocation(-455, transform.getPosition().getY());
 		}
+		
+		if (transform.getPosition().getX() > 455) {
+			transform.getPosition().setLocation(455, transform.getPosition().getY());
+		}
+		
+		if (transform.getPosition().getY() < -330) {
+			transform.getPosition().setLocation(transform.getPosition().getX(), -330);
+		}
+		
+		if (transform.getPosition().getY() > 345) {
+			transform.getPosition().setLocation(transform.getPosition().getX(), 345);
+		}
+		
+		if(shootCooldown < System.nanoTime()/1000000000.0) {
+			shootCooldown += 0.05;
+			if(input.getInput(InputHandler.KEY_SHOOT) == 1) {
+				InstanceParams par = new InstanceParams();
+				par.transform = new Transform(transform);
+				par.transform.getPosition().setLocation(transform.getPosition().getX(), transform.getPosition().getY() - 10);
+				par.transform.getDefaultScale().setLocation(25, 25);
+				par.transform.setScale(1);
+				par.transform.setZPosition(10);
+				
+				
+				EntityInstancer.getInstance().instance(EntityInstancer.ENT_PLAYER_BULLET, par);
+			}
+		}
+		
+		if (input.getInput(InputHandler.KEY_BOMB) == 0) {
+			InstanceParams par = new InstanceParams();
+
+			par.transform = new Transform(transform);
+			par.transform.getPosition().setLocation(-500, -100);
+			par.transform.getDefaultScale().setLocation(50, 43);
+			par.transform.setScale(1);
+			par.transform.setZPosition(10);
+			par.pattern = TestEnemyPattern.getInstance();
+			par.spriteData.alpha = 1.0f;
+			par.spriteData.type = ImageBufferHandler.TRIANGLE;
+			par.spriteData.color = ImageBufferHandler.T_ORANGE1;
+			par.lifeTime = 10.0;
+			par.speed = 100;
+			EntityInstancer.getInstance().instance(EntityInstancer.ENT_TEST_ENEMY, par);
+		}
+		
 	}
 
 	@Override
@@ -91,8 +138,7 @@ public class Player extends Entity implements Collisionable{
 
 	@Override
 	public void onCollision(Collisionable collider) {
-		System.out.println("Hm");
-		collider.destroy();
+		//collider.destroy();
 		
 	}
 }

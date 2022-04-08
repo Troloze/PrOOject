@@ -1,24 +1,17 @@
 package game.bullets;
 
 import engine.SpriteHolder;
-import game.Collisionable;
 import game.Hazard;
-import game.Sprite;
-import misc.Transform;
+import game.Pattern;
 
 public abstract class Bullet extends Hazard implements SpriteHolder {
 
-	private Sprite sprite;
+	Bullet() {
+		super();
+	}
 	
-	@Override
-	public Transform getTransform() {
-		// TODO Auto-generated method stub
-		return null;
+	Bullet(Pattern pat) {
+		super(pat);
 	}
-
-	@Override
-	public void onCollision(Collisionable entity) {
-		// TODO Auto-generated method stub
-
-	}
+	
 }

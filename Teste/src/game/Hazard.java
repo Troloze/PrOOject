@@ -1,8 +1,11 @@
 package game;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 
+import misc.InstanceParams;
 import misc.Misc;
+import misc.Transform;
 
 public abstract class Hazard extends Entity implements Collisionable{
 	protected double rotationSpeed;
@@ -14,8 +17,9 @@ public abstract class Hazard extends Entity implements Collisionable{
 	protected double direction = 0;
 	protected double life;
 	protected double damage;
+	protected double alpha;
 	
-	protected Point2D directionRate = new Point2D.Double(1.0, 0.0);
+	protected Point2D directionRate;
 	protected double oldDirection = 0;
 	
 	protected double startTime;
@@ -31,17 +35,37 @@ public abstract class Hazard extends Entity implements Collisionable{
 		alive = true;
 		startTime = System.nanoTime()/Misc.Other.nanoSecond;
 		pattern = null;
+		directionRate = new Point2D.Double(1.0, 0.0);
 	}
 	
 	protected Hazard(Pattern pat) {
+		collider = new Collider();
 		alive = true;
 		startTime = System.nanoTime()/Misc.Other.nanoSecond;
 		this.pattern = pat;
 		pattern.onStart(this);
+		directionRate = new Point2D.Double(1.0, 0.0);
 	}
 
 	public Point2D getDirectionRate() {
+		if (directionRate == null) return new Point2D.Double(1, 0);
 		return directionRate;
+	}
+	
+	protected void updateInstanceData(InstanceParams par) {
+		if (par == null) return;
+		this.rotationSpeed = par.rotationSpeed;
+		this.rotationAcceleration = par.rotationAcceleration;
+		this.rotationDrag = par.rotationDrag;
+		this.speed = par.speed;
+		this.direction = par.direction;
+		this.life = par.life;
+		this.damage = par.damage;
+		this.lifeTime = par.lifeTime;
+		if (par.transform != null) this.transform = new Transform(par.transform);
+		else this.transform = new Transform();
+		this.pattern = par.pattern;
+		this.pattern.onStart(this);
 	}
 	
 	private void updateStats() {
@@ -81,7 +105,7 @@ public abstract class Hazard extends Entity implements Collisionable{
 		}
 		
 		if (oldDirection != direction) {
-			directionRate.setLocation(Math.cos(direction), Math.sin(direction));
+			directionRate.setLocation(Misc.Other.fcosDeg(direction), Misc.Other.fsinDeg(direction));
 			oldDirection = direction;
 		}
 	}
@@ -103,10 +127,19 @@ public abstract class Hazard extends Entity implements Collisionable{
 		double currentTime = System.nanoTime()/Misc.Other.nanoSecond;
 		updateStats();
 		
-		if (pattern != null) pattern.cast(startTime, currentTime);
+		if (pattern != null) pattern.cast(this, startTime, currentTime, delta);
 		if (currentTime >= startTime + lifeTime) destroy();
 	}
 		
+	public double getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+		
+	}
+	
 	public Collider getCollider() {
 		return collider;
 	}
@@ -181,10 +214,6 @@ public abstract class Hazard extends Entity implements Collisionable{
 
 	public void setDamage(double damage) {
 		this.damage = damage;
-	}
-
-	public double getOldDirection() {
-		return oldDirection;
 	}
 
 	public double getStartTime() {

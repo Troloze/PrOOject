@@ -109,7 +109,7 @@ public class Cluster implements SpriteHolder {
 				transform.getPosition().getY() - this.transform.getPosition().getY());
 		
 		//retTransform.setRotation(transform.getRotation() - this.transform.getRotation());
-		
+		retTransform.setZPosition(0);
 		return retTransform;
 	}
 	
@@ -127,7 +127,8 @@ public class Cluster implements SpriteHolder {
 		}
 	}
 	
-	public void update() {
+	public void update(double delta) {
+		transform.setRotation(transform.getRotation() + 100 * delta);
 		if (body == null) return;
 		if (body.isDestroyed()) return;
 		transform.follow(body.getTransform(), Transform.FOLLOW_NOT_DEFAULT_SCALE);			
