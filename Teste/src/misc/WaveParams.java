@@ -8,11 +8,8 @@ import game.patterns.GenericEnemyPattern;
 
 public class WaveParams {
 	
-	
-	private final double TOP_SPAWN = -400;
 	private final double LEFT_SPAWN = -500;
 	private final double RIGHT_SPAWN = 500;
-	private final double[] TOP_POSSIBILITIES = {0, 200, -200};
 	private final double[] SIDE_POSSIBILITIES = {0, -100, -200};
 	
 	
@@ -39,58 +36,6 @@ public class WaveParams {
 		nID.color = (int) Math.round(Math.random() * 7);
 		if (nID.type == 1 || nID.type == 5) nID.type++;
 		return nID;
-	}
-	
-
-	
-	private InstanceParams generateBullet1() {
-		InstanceParams instPar = new InstanceParams();
-		boolean rotates = getRandom(10, 3);
-		instPar.speed = 500;
-		instPar.transform.getDefaultScale().setLocation(50, 50);
-		instPar.transform.setScale(Math.random() * 1.75 + 0.75);
-		if (rotates) instPar.rotationSpeed = (Math.random() * 9 + 1) * (getRandom(2, 1) ? 1 : -1);
-		instPar.speed = Math.random() * 400 + 200;
-		instPar.lifeTime = 10;
-		instPar.spriteData = randomBullet();
-		String[] keys = {"Scale"};
-		Object[] args = {Math.random() * 1.5 + 0.5};
-		instPar.patPar = new PatternParams(1, keys, args);
-		instPar.pattern = GenericEnemyPattern.getInstance();
-		return instPar;
-	}
-	
-	private PatternParams generatePattern1() {
-		String[] pKeys = {
-				"InstParams",
-				"Amount",
-				"FollowPlayer",
-				"Spread",
-				"RandomDir"
-		};
-		Object[] pArgs = {
-				generateBullet1(),
-				(int) (Math.random() * 10) + (getRandom(5, 1) ?  1 : 5),
-				false,
-				(getRandom(2,1)) ? (getRandom(2, 1) ? 0 : 360) : (Math.random() * 60 + 30),
-				true
-		};
-		String[] keys = {
-				"Sleep",
-				"Pattern",
-				"ArgKeys",
-				"ArgVals",
-				"ArgN"
-		};
-		Object[] args = {
-				(int) (Math.random() * 60 + 60), // Sleep
-				RadialSpreadInstruction.getInstance(),
-				pKeys,
-				pArgs,
-				5
-		};
-		PatternParams retPar = new PatternParams(5, keys, args);
-		return retPar;
 	}
 	
 	private InstanceParams generateBarrageBullet() {
@@ -180,7 +125,7 @@ public class WaveParams {
 		instPar.transform.getDefaultScale().setLocation(50, 50);
 		instPar.transform.setScale(Math.random() * 1.75 + 0.75);
 		if (rotates) instPar.rotationSpeed = (Math.random() * 15 + 2) * (getRandom(2, 1) ? 1 : -1);
-		instPar.speed = Math.random() * 600 + 100;
+		instPar.speed = Math.random() * 500 + 100;
 		instPar.lifeTime = 10;
 		instPar.spriteData = randomBullet();
 		String[] keys = {"Scale"};
@@ -215,7 +160,7 @@ public class WaveParams {
 				"ArgN"
 		};
 		Object[] args = {
-				(int) (Math.random() * 8 + 2), // Sleep
+				(int) (Math.random() * 8 + 4), // Sleep
 				RadialSpreadInstruction.getInstance(),
 				pKeys,
 				pArgs,
@@ -251,7 +196,7 @@ public class WaveParams {
 		};
 		Object[] pArgs = {
 				generateBlastBullet(),
-				(int) (Math.random() * 20) + 5,
+				(int) (Math.random() * 15) + 10,
 				false,
 				360.0,
 				true,
@@ -265,7 +210,7 @@ public class WaveParams {
 				"ArgN"
 		};
 		Object[] args = {
-				(int) (Math.random() * 60 + 30), // Sleep
+				(int) (Math.random() * 60 + 60), // Sleep
 				RadialSpreadInstruction.getInstance(),
 				pKeys,
 				pArgs,

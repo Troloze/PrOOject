@@ -14,7 +14,6 @@ public final class ImageBufferHandler {
 	private static int bufferSize;
 	private static ImageBufferHandler instance = null;
 	private static FileHandler file;
-	private static boolean isWorking;
 	
 	private static final int TYPE_C = 10;
 	private static final int QUALITY_C = 5;
@@ -270,7 +269,6 @@ public final class ImageBufferHandler {
 			exists = file.fileExists(PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + ((type == TRIANGLE) ? T_COLOR[color] : B_COLOR[color]) + SUFFIX);
 			
 			if (!exists) {
-				isWorking = false;
 				System.out.println("File does not exist: " + PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + ((type == TRIANGLE) ? T_COLOR[color] : B_COLOR[color]) + SUFFIX);
 				System.exit(0);
 			}

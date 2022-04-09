@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import engine.InputHandler;
-import misc.InstanceParams;
 import misc.Transform;
 
 public final class Game {

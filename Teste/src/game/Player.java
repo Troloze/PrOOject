@@ -4,7 +4,6 @@ import java.awt.geom.Point2D;
 
 import engine.ImageBufferHandler;
 import engine.InputHandler;
-import game.patterns.TestEnemyPattern;
 import misc.InstanceParams;
 import misc.Transform;
 

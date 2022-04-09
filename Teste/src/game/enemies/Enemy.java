@@ -1,6 +1,5 @@
 package game.enemies;
 
-import engine.ImageBufferHandler;
 import engine.SpriteHolder;
 import game.Collider;
 import game.Collisionable;

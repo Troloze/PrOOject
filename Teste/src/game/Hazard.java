@@ -1,7 +1,6 @@
 package game;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import game.patterns.Pattern;
 import misc.InstanceParams;

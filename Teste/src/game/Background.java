@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import engine.ImageBufferHandler;
-import engine.SpriteHolder;
 import misc.Misc;
 import misc.ShapeData;
 import misc.Transform;

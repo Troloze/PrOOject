@@ -1,13 +1,11 @@
 package engine;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import game.Sprite;
 import misc.ImageData;
@@ -17,8 +15,6 @@ public final class Renderer {
 	private static Renderer instance;
 	private static List<Sprite> addQueue = null;
 	private static List<Sprite> destroyQueue = null;
-	private static PriorityQueue<Sprite> gameBuffer = null;
-	private static PriorityQueue<Sprite> gameBuffer2 = null;
 	private static List<Sprite> testBuffer = null;
 		
 	private static bufferComparator bC;
@@ -29,7 +25,6 @@ public final class Renderer {
 		addQueue = new ArrayList<>();
 		destroyQueue = new ArrayList<>();
 		bC = new bufferComparator();
-		gameBuffer = new PriorityQueue<>(100, bC);
 		testBuffer = new ArrayList<>();
 	}
 	

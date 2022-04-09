@@ -32,7 +32,6 @@ public final class TestEnemyPattern extends Pattern{
 	
 	@Override
 	public void cast(Hazard entity, double startTime, double currentTime, double delta) {
-		double time = currentTime - startTime;
 		int t = new GenGet<Integer>(Integer.class).get(readArgument("T"), 0);
 		int wait = new GenGet<Integer>(Integer.class).get(readArgument("Sleep"), 1);
 		if (t%wait == wait - 1) {

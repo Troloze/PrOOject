@@ -58,7 +58,9 @@ private Sprite spr;
 			pattern.setArgument("Start", 0.5);
 		}
 		baseUpdate(delta);
+		direction += rotationSpeed * delta;
 		transform.setRotation(direction + 90);
+		
 		if (this.spr != null) this.spr.setAlpha((float) this.alpha);
 		
 		if (Math.abs(transform.getPosition().getX()) > 500) destroy();

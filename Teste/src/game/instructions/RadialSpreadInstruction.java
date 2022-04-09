@@ -1,7 +1,5 @@
 package game.instructions;
 
-import java.awt.geom.Point2D;
-
 import engine.ImageBufferHandler;
 import game.EntityInstancer;
 import game.Game;
@@ -28,7 +26,6 @@ public final class RadialSpreadInstruction extends Instruction {
 	
 	@Override
 	public void invoke(Hazard entity, double startTime, double currentTime, double delta) {
-		Object arg;
 		int amount;
 		double spread, direction, thisDir, invAmount, speed, dirOff;
 		boolean follow, random;
