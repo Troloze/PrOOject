@@ -9,7 +9,6 @@ import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
-import game.Game;
 import game.GameStateHandler;
 import game.RankInfo;
 
@@ -79,7 +78,9 @@ public final class MyPanel extends JPanel implements Runnable {
 		renderer.render(g2);
 		
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
 		if(GameStateHandler.getState() == GameStateHandler.STATE_PLAYING) RankInfo.getInstance().drawScore(g2);
+
 		stateHandler.draw(g2);
 		
 		//Game.getInstance().debugDraw(g2);

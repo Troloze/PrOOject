@@ -1,9 +1,9 @@
 package game.bullets;
 
-import engine.ImageBufferHandler;
 import game.Collider;
 import game.Collisionable;
 import game.Sprite;
+import game.patterns.GenericBulletPattern;
 import misc.InstanceParams;
 import misc.Transform;
 
@@ -16,7 +16,9 @@ private Sprite spr;
 	}
 	
 	private GenericBullet(InstanceParams params) {
-		super(game.patterns.GenericBulletPattern.getInstance());
+		super(GenericBulletPattern.getInstance());
+		params.pattern = GenericBulletPattern.getInstance();
+		updateInstanceData(params);
 		
 		this.collider.setDamageFlags(Collider.FLAG_ENEMY_BULLET);
 		this.collider.setHitFlags(Collider.FLAG_PLAYER);
@@ -26,10 +28,10 @@ private Sprite spr;
 		this.collider.setDamagebox(15);
 		
 		this.damage = 1;
-		this.direction = params.direction;
-		this.speed = params.speed;
-		this.lifeTime = 10;
-		this.transform = new Transform(params.transform);
+		//this.direction = params.direction;
+		//this.speed = params.speed;
+		//this.lifeTime = 10;
+		//this.transform = new Transform(params.transform);
 		if (this.transform == null) {
 			destroy();
 			return;
@@ -37,7 +39,7 @@ private Sprite spr;
 		this.transform.setRotation(params.direction + 90);
 		this.transform.getDefaultScale().setLocation(50, 50);
 		this.spr = new Sprite(this);
-		this.spr.set(ImageBufferHandler.ARROW, ImageBufferHandler.B_BLUE);
+		this.spr.set(params.spriteData.type, params.spriteData.color);
 		this.spr.setAlpha(0f);
 	}
 	
@@ -59,6 +61,7 @@ private Sprite spr;
 			pattern.setArgument("Start", 0.5);
 		}
 		baseUpdate(delta);
+		transform.setRotation(direction + 90);
 		if (this.spr != null) this.spr.setAlpha((float) this.alpha);
 	}
 

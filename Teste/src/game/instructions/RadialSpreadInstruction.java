@@ -31,7 +31,9 @@ public final class RadialSpreadInstruction extends Instruction {
 		double spread, direction, thisDir, invAmount, speed;
 		Transform offset;
 		InstanceParams par;
-			
+		
+		
+		par = new GenGet<InstanceParams>(InstanceParams.class).get(readArgument("InstParams"), null);	
 		amount = new GenGet<Integer>(Integer.class).get(readArgument("Amount"), 0);	
 		spread = new GenGet<Double>(Double.class).get(readArgument("Spread"), 0.0);
 		direction = new GenGet<Double>(Double.class).get(readArgument("Direction"), 0.0);	
@@ -53,12 +55,16 @@ public final class RadialSpreadInstruction extends Instruction {
 		for (int i = 0; i < amount; i++) {
 			invAmount = 1.0/amount;
 			thisDir = (i * spread * invAmount) + (direction - spread * 0.5);
-			par = new InstanceParams();
-			par.transform = offset;
-			par.direction = 360 + thisDir;
-			par.speed = speed;
-			par.spriteData.type = ImageBufferHandler.ARROW;
-			par.spriteData.color = ImageBufferHandler.B_RED;
+			if (par == null) {
+				par = new InstanceParams();
+				par.transform = offset;
+				par.direction = 360 + thisDir;
+				par.speed = speed;
+				par.spriteData.type = ImageBufferHandler.ARROW;
+				par.spriteData.color = ImageBufferHandler.B_WHITE;
+			} else {
+				par.direction = 360 + thisDir;
+			}
 			EntityInstancer.instance(EntityInstancer.ENT_GENERIC_BULLET, par);
 		}
 		

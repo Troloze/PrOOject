@@ -4,6 +4,7 @@ import game.Hazard;
 import game.instructions.ForwardInstruction;
 import game.instructions.Instruction;
 import game.instructions.RadialSpreadInstruction;
+import misc.GenGet;
 
 public final class TestEnemyPattern extends Pattern{
 
@@ -32,14 +33,17 @@ public final class TestEnemyPattern extends Pattern{
 	@Override
 	public void cast(Hazard entity, double startTime, double currentTime, double delta) {
 		double time = currentTime - startTime;
-
-		radialPat.setArgument("Amount", 60);
-		radialPat.setArgument("Spread", 180.0);
-		radialPat.setArgument("Direction", time * 180);
-		radialPat.setArgument("Transform", null);
-		radialPat.setArgument("Speed", time * 5 + 10);
-		radialPat.invoke(entity, delta);
-		
+		int t = new GenGet<Integer>(Integer.class).get(readArgument("T"), 0);
+		int wait = new GenGet<Integer>(Integer.class).get(readArgument("Sleep"), 1);
+		if (t%wait == wait - 1) {
+			radialPat.setArgument("Amount", readArgument("Amount"));
+			radialPat.setArgument("Spread", readArgument("Spread"));
+			radialPat.setArgument("Direction", readArgument("Direction"));
+			radialPat.setArgument("Transform", readArgument("Transform"));
+			radialPat.setArgument("Speed", readArgument("Speed"));
+			radialPat.setArgument("InstParams", readArgument("InstParams"));
+			radialPat.invoke(entity, delta);
+		}
 		inst.invoke(entity, delta);
 	}
 

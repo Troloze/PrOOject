@@ -173,7 +173,9 @@ public class GameStateHandler {
 	}
 	
 	public void start() {
+		
 		setState(STATE_PLAYING);
+		Game.getInstance().startGame();
 	}
 	
 	public void resume() {
@@ -182,6 +184,7 @@ public class GameStateHandler {
 	}
 	
 	public void returnToMain() {
+		Game.getInstance().destroyAll();
 		MenuElement.setDefault();
 		setState(STATE_MAIN_MENU);
 	}
@@ -201,15 +204,16 @@ public class GameStateHandler {
 	}
 	
 	public void gameOver() {
-		if(lifeTime == 0) lifeTime = System.nanoTime();
-		
-		if((System.nanoTime() - lifeTime) >= 2000000000.0) {
-			if(rankList.isEligible()) {
-				setState(STATE_INSERTING);
-			} else {
-				setState(STATE_RANKING);
-			}
-		}
+    if(lifeTime == 0) lifeTime = System.nanoTime();
+      if((System.nanoTime() - lifeTime) >= 2000000000.0) {
+        Game.getInstance().destroyAll();
+        if(rankList.isEligible()) {
+          setState(STATE_INSERTING);
+        } else {
+          setState(STATE_RANKING);
+        }
+
+      }
 	}
 	
 	public void reset() {
