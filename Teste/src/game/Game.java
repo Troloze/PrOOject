@@ -15,6 +15,7 @@ public final class Game {
 	private static Game instance;
 	
 	private Point2D playerPos;
+	private int playerHp;
 	
 	private GameStateHandler stateHandler;
 	private InputHandler input;
@@ -70,6 +71,7 @@ public final class Game {
 	
 	public void destroyAll() {
 		delet = true;
+		Wave.getInstance().reset();
 		for(Entity ent : entities) {
 			if (background == ent) continue;
 			ent.destroy();

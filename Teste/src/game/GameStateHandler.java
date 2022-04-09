@@ -161,7 +161,7 @@ public class GameStateHandler {
 				rankList.sortRankList();
 				rankList.save();
 				keyBoard.setDefault();
-				setState(0);
+				setState(STATE_RANKING);
 			} else {
 				if(keyBoard.getChar() == '<') {
 					keyBoard.removeChar();
@@ -231,7 +231,7 @@ public class GameStateHandler {
 			break;
 		case STATE_LOSE:
 			String str = "GAME OVER";
-			g2.setColor(Color.red);
+			g2.setColor(new Color(0xF3F0F5));
 			TextParameter.setFont(g2, TextParameter.GAME_OVER_FONT_SIZE);
 			g2.drawString(str, TextParameter.getXForCenteredText(g2, str), TextParameter.getYForCenteredText(g2, str));
 			break;

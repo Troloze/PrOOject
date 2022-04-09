@@ -39,10 +39,11 @@ public final class Wave {
 			waveCount += 1;
 			EntityInstancer.instance(EntityInstancer.ENT_ENEMY, currentWave.instPar);
 		}
-		
-		
-		
 	}
 	
-	
+	public void reset() {
+		currentWave = null;
+		waveCount = 0;
+		timeCount = 0;
+	}
 }

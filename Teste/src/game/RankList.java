@@ -43,7 +43,7 @@ public class RankList {
 		for(int i = 0; i < fileStr.size(); i++) {
 			str = fileStr.get(i).split(":");
 			
-			if(str[0].indexOf("\0") > 0) {
+			if(str[0].indexOf("\0") >= 0) {
 				name = str[0].substring(0, str[0].indexOf("\0"));
 			} else {
 				name = str[0];
@@ -54,18 +54,18 @@ public class RankList {
 	}
 	
 	public void sortRankList() {
-		if(rankList.size() < 10) {
-			rankList.add(new RankInfo(mainInfo.getName(), mainInfo.getScore()));
-			System.out.println("Nome: " + rankList.get(0).getName() + " Score: " + rankList.get(0).getScore());
-			return;
-		}
-		
 		for(int i = 0; i < rankList.size(); i++) {
 			if(rankList.get(i).getScore() < mainInfo.getScore()) {
 				rankList.add(i, new RankInfo(mainInfo.getName(), mainInfo.getScore()));
 				if(rankList.size() > 10) rankList.remove(10);
 				return;
 			}
+		}
+		
+		if(rankList.size() < 10) {
+			rankList.add(new RankInfo(mainInfo.getName(), mainInfo.getScore()));
+			System.out.println("Nome: " + rankList.get(0).getName() + " Score: " + rankList.get(0).getScore());
+			return;
 		}
 	}
 	
