@@ -1,5 +1,7 @@
 package game;
 
+import java.awt.Graphics2D;
+
 public class RankInfo {
 	private static RankInfo instance;
 	
@@ -26,6 +28,14 @@ public class RankInfo {
 	public void setDefault() {
 		name = "\0";
 		score = 0;
+	}
+	
+	public void drawScore(Graphics2D g2) {
+		String str = "SCORE: ";
+		
+		g2.setColor(TextParameter.NOT_FOCUS_COLOR);
+		TextParameter.setFont(g2, TextParameter.SCORE_FONT_SIZE);
+		g2.drawString(str + instance.getScore(), TextParameter.STRING_PANEL_X_BEGINNING, TextParameter.STRING_PANEL_Y_BEGINNING);
 	}
 	
 	public void setScore(int score) {

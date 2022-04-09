@@ -57,7 +57,7 @@ public final class Game {
 		}
 		
 		if(stateHandler.getState() == GameStateHandler.STATE_PLAYING) {
-			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_PAUSED);
+			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_LOSE);
 			updateEntities(delta);
 			addNewEntities();
 			updateCollision();
@@ -188,8 +188,5 @@ public final class Game {
 
 			return (x0 > x1) ? 1 : ((x1 > x0) ? -1 : 0);
 		}
-
-		
-		
 	}
 }

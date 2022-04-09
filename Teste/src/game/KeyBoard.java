@@ -45,6 +45,7 @@ public class KeyBoard {
 	
 	public void draw(Graphics2D g2) {
 		TextParameter.setFont(g2, TextParameter.KEYBOARD_FONT_SIZE);
+		g2.setColor(TextParameter.NOT_FOCUS_COLOR);
 		
 		int x, y;
 		
@@ -93,7 +94,11 @@ public class KeyBoard {
 	}
 	
 	public String getString() {
-		return String.valueOf(chars);
+		if(String.valueOf(chars).indexOf("\0") > 0) {
+			return String.valueOf(chars).substring(0, String.valueOf(chars).indexOf("\0"));
+		} else {
+			return String.valueOf(chars);
+		}
 	}
 	
 	public int getCharYPosition() {

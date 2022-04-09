@@ -28,6 +28,8 @@ public class GameStateHandler {
 	private ArrayList<MenuElement> pauseMenu;
 	private ArrayList<MenuElement> rankingMenu;
 	
+	private double lifeTime = 0;
+	
 	private GameStateHandler() {
 		inputHandler = InputHandler.getInstance();
 		
@@ -56,6 +58,7 @@ public class GameStateHandler {
 			pause();
 			break;
 		case STATE_LOSE:
+			gameOver();
 			break;
 		case STATE_RANKING:
 			ranking();
@@ -154,7 +157,7 @@ public class GameStateHandler {
 		} else if (inputHandler.getInput(InputHandler.KEY_SHOOT) == 0) {
 			if(keyBoard.getChar() == '>') {
 				mainInfo.setName(keyBoard.getString());
-				mainInfo.setScore(13);
+				mainInfo.setScore(1000000);
 				rankList.sortRankList();
 				rankList.save();
 				keyBoard.setDefault();
@@ -198,10 +201,14 @@ public class GameStateHandler {
 	}
 	
 	public void gameOver() {
-		if(rankList.isEligible()) {
-			setState(STATE_INSERTING);
-		} else {
-			setState(STATE_RANKING);
+		if(lifeTime == 0) lifeTime = System.nanoTime();
+		
+		if((System.nanoTime() - lifeTime) >= 2000000000.0) {
+			if(rankList.isEligible()) {
+				setState(STATE_INSERTING);
+			} else {
+				setState(STATE_RANKING);
+			}
 		}
 	}
 	
@@ -210,9 +217,7 @@ public class GameStateHandler {
 		returnToMain();
 	}
 	
-	public void draw(Graphics2D g2) {
-		g2.setColor(Color.pink);
-		
+	public void draw(Graphics2D g2) {	
 		switch(state) {
 		case STATE_MAIN_MENU:
 			MenuElement.drawMainMenu(g2);
@@ -221,6 +226,10 @@ public class GameStateHandler {
 			MenuElement.drawPauseMenu(g2);
 			break;
 		case STATE_LOSE:
+			String str = "GAME OVER";
+			g2.setColor(Color.red);
+			TextParameter.setFont(g2, TextParameter.GAME_OVER_FONT_SIZE);
+			g2.drawString(str, TextParameter.getXForCenteredText(g2, str), TextParameter.getYForCenteredText(g2, str));
 			break;
 		case STATE_RANKING:
 			rankList.draw(g2);

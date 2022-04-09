@@ -101,9 +101,9 @@ public abstract class MenuElement {
 		
 		for(int i = 0; i < 2; i++) {
 			if(rankingMenuIndex == 1 - i) {
-				g2.setColor(Color.red);
+				g2.setColor(TextParameter.FOCUS_COLOR);
 			} else {
-				g2.setColor(Color.pink);
+				g2.setColor(TextParameter.NOT_FOCUS_COLOR);
 			}
 			
 			x = TextParameter.getXForCenteredText(g2, str[1 - i]);
@@ -250,7 +250,8 @@ public abstract class MenuElement {
 				game.quit();
 			} catch (GetGoodException e) {
 				// TODO Auto-generated catch block
-				System.out.printf("Pontuacao minima necessaria para fechar o jogo não alcancada: %d/%d", e.getPlrScore(), e.getMinScore());
+				System.out.println("Pontuacao minima necessaria para fechar o jogo não alcancada: " + e.getPlrScore() + "/" + e.getMinScore());
+				e.printStackTrace();
 			}
 		}
 	}
