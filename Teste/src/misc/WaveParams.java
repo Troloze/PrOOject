@@ -336,7 +336,7 @@ public class WaveParams {
 			instPar.patPar = generateBarrage1();
 		} else if (chance < 30) {
 			instPar.patPar = generateBarrage2();
-		} else if (chance < 60) {
+		} else if (chance < 70) {
 			instPar.patPar = generateBlast();
 		} else {
 			instPar.patPar = generateStorm();
