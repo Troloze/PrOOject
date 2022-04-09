@@ -57,6 +57,7 @@ public class RankList {
 	public void sortRankList() {
 		if(rankList.size() < 10) {
 			rankList.add(new RankInfo(mainInfo.getName(), mainInfo.getScore()));
+			System.out.println("Nome: " + rankList.get(0).getName() + " Score: " + rankList.get(0).getScore());
 			return;
 		}
 		

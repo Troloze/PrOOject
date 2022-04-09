@@ -21,13 +21,15 @@ public class TextParameter {
 	public static final int OFFSET_AVERAGE = (int) (RenderSettings.PANEL_HEIGHT * 0.0666);
 	public static final int OFFSET_DISTANT = (int) (RenderSettings.PANEL_HEIGHT * 0.1000);
 	
-	public static final int KEYBOARD_FONT_SIZE = (int) ((double) RenderSettings.PANEL_HEIGHT * 0.06);
+	public static final int KEYBOARD_FONT_SIZE = (int) ((double) RenderSettings.PANEL_HEIGHT * 0.08);
 	public static final int MENU_FONT_SIZE = (int) ((double) RenderSettings.PANEL_HEIGHT * 0.1);
 	public static final int PAUSE_FONT_SIZE = (int) ((double) RenderSettings.PANEL_HEIGHT * 0.06);
 	public static final int RANKING_FONT_SIZE = (int) ((double) RenderSettings.PANEL_HEIGHT * 0.06);
+	public static final int GAME_OVER_FONT_SIZE = (int) ((double) RenderSettings.PANEL_HEIGHT * 0.25);
+	public static final int SCORE_FONT_SIZE = (int) ((double) RenderSettings.PANEL_HEIGHT * 0.03);
 	
-	public static final Color FOCUS_COLOR = Color.red;
-	public static final Color NOT_FOCUS_COLOR = Color.pink;
+	public static final Color FOCUS_COLOR = new Color(0x8ECBDD);
+	public static final Color NOT_FOCUS_COLOR = new Color(0xF3F0F5);
 	
 	private static Font abstractFont;
 	
@@ -53,7 +55,7 @@ public class TextParameter {
 	
 	public static int getYForCenteredText(Graphics2D g2, String text) {
 		int lenght = (int) g2.getFontMetrics().getStringBounds(text, g2).getHeight();
-		int y = (RenderSettings.PANEL_HEIGHT / 2) - (lenght / 2);
+		int y = (RenderSettings.PANEL_HEIGHT / 2) + (lenght / 2);
 		return y;
 	}
 	

@@ -64,7 +64,6 @@ public final class Game {
 	
 	public void gameUpdate(double delta) {
 
-		
 		if(GameStateHandler.getState() == GameStateHandler.STATE_PLAYING) {
 			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_PAUSED);
 			updateEntities(delta);
@@ -208,8 +207,5 @@ public final class Game {
 
 			return (x0 > x1) ? 1 : ((x1 > x0) ? -1 : 0);
 		}
-
-		
-		
 	}
 }

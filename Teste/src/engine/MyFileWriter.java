@@ -28,7 +28,7 @@ public class MyFileWriter {
 	
 	public void rewriteFile(PrintWriter file, ArrayList<RankInfo> rank) {
 		for(int i = 0; i < rank.size(); i++) {
-			file.println(rank.get(i).toString());
+			file.println(rank.get(i).getName() + ":" + rank.get(i).getScore());
 		}
 		
 		file.close();
