@@ -45,6 +45,7 @@ public final class TestEnemyPattern extends Pattern{
 			radialPat.invoke(entity, delta);
 		}
 		inst.invoke(entity, delta);
+		resetArguments();
 	}
 
 }

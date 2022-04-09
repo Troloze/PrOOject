@@ -26,6 +26,10 @@ public abstract class Instruction {
 		else arguments.put(key, value);
 	}
 	
+	public void resetArguments() {
+		arguments.clear();
+	}
+	
 	public void invoke() {
 		invoke(null, 0.0, 0.0, 0.0);
 	}

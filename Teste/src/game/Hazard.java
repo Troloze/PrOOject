@@ -67,8 +67,6 @@ public abstract class Hazard extends Entity implements Collisionable{
 		if (par.transform != null) this.transform = new Transform(par.transform);
 		else this.transform = new Transform();
 		
-
-		if (this.pattern != null) return;
 		this.pattern = par.pattern;
 		if (this.pattern != null) this.pattern.onStart(this);
 	}

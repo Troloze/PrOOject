@@ -27,7 +27,7 @@ public final class ForwardInstruction extends Instruction {
 		entity.getTransform().getPosition().setLocation(
 				entity.getTransform().getPosition().getX() + dirRate.getX() * entity.getSpeed() * delta, 
 				entity.getTransform().getPosition().getY() +dirRate.getY() * entity.getSpeed() * delta);
-
+		resetArguments();
 	}
 
 }

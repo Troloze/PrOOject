@@ -9,7 +9,7 @@ public final class EntityInstancer {
 	
 	public static final int ENT_PLAYER = 0;
 	public static final int ENT_PLAYER_BULLET = 1;
-	public static final int ENT_TEST_ENEMY = 2;
+	public static final int ENT_ENEMY = 2;
 	public static final int ENT_GENERIC_BULLET = 3;
 	
 	private static EntityInstancer instance;
@@ -40,7 +40,7 @@ public final class EntityInstancer {
 			case ENT_PLAYER_BULLET:
 				ent = PlayerBullet.newInstance(params);
 			break;
-			case ENT_TEST_ENEMY:
+			case ENT_ENEMY:
 				ent = Enemy.newInstance(params);
 			break;
 			case ENT_GENERIC_BULLET: 

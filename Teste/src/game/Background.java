@@ -13,7 +13,7 @@ import misc.Misc;
 import misc.ShapeData;
 import misc.Transform;
 
-public class Background extends Entity implements SpriteHolder {
+public class Background extends Entity {
 
 	
 	private static final int sizeX = 27;

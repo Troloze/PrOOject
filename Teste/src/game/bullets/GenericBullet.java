@@ -16,10 +16,10 @@ private Sprite spr;
 	}
 	
 	private GenericBullet(InstanceParams params) {
-		super(GenericBulletPattern.getInstance());
-		params.pattern = GenericBulletPattern.getInstance();
+		super();
+
 		updateInstanceData(params);
-		
+		this.pattern = GenericBulletPattern.getInstance();
 		this.collider.setDamageFlags(Collider.FLAG_ENEMY_BULLET);
 		this.collider.setHitFlags(Collider.FLAG_PLAYER);
 		this.collider.toggleHazard(true);
@@ -28,10 +28,7 @@ private Sprite spr;
 		this.collider.setDamagebox(15);
 		
 		this.damage = 1;
-		//this.direction = params.direction;
-		//this.speed = params.speed;
-		//this.lifeTime = 10;
-		//this.transform = new Transform(params.transform);
+
 		if (this.transform == null) {
 			destroy();
 			return;
@@ -63,6 +60,9 @@ private Sprite spr;
 		baseUpdate(delta);
 		transform.setRotation(direction + 90);
 		if (this.spr != null) this.spr.setAlpha((float) this.alpha);
+		
+		if (Math.abs(transform.getPosition().getX()) > 500) destroy();
+		if (Math.abs(transform.getPosition().getY()) > 400) destroy();
 	}
 
 	@Override

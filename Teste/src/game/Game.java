@@ -15,10 +15,13 @@ import misc.Transform;
 public final class Game {
 	private static Game instance;
 	
+	private Point2D playerPos;
+	
 	private GameStateHandler stateHandler;
 	private InputHandler input;
 	
 	private static double score = 0;
+	private boolean delet = false;
 		
 	private static List<Entity> entities;
 	private static List<Entity> waitEntities;
@@ -40,6 +43,16 @@ public final class Game {
 		
 		background = new Background();
 		entities.add(background);
+		
+		playerPos = new Point2D.Double();
+	}
+	
+	public void setPPos(Point2D pos) {
+		playerPos.setLocation(pos);
+	}
+	
+	public Point2D getPlayerPosition() {
+		return playerPos;
 	}
 	
 	public static Game getInstance() {
@@ -57,6 +70,7 @@ public final class Game {
 	}
 	
 	public void destroyAll() {
+		delet = true;
 		for(Entity ent : entities) {
 			if (background == ent) continue;
 			ent.destroy();
@@ -65,13 +79,18 @@ public final class Game {
 	
 	public void gameUpdate(double delta) {
 		stateHandler.updateState();
-		
+		if (delet) {
+			delet = false;
+			//destroy();
+			updateEntities(delta);
+		}
 		if(GameStateHandler.getState() == GameStateHandler.STATE_PLAYING || GameStateHandler.getState() == GameStateHandler.STATE_LOSE) {
 			if(input.getInput(InputHandler.KEY_PAUSE) == 0) GameStateHandler.setState(GameStateHandler.STATE_PAUSED);
 			score += (5 * delta);
 			RankInfo.getInstance().setScore((int) (score) * 100);
 			updateEntities(delta);
 			updateCollision();
+			updateWave(delta);
 			destroy();
 			addNewEntities();
 		} 
@@ -79,14 +98,12 @@ public final class Game {
 			background.update(delta); 
 			return;
 		}
-		
-			
-		
-		
-		
 	}
 
-
+	public void updateWave(double delta) {
+		Wave.getInstance().update(delta);
+	}
+	
 	public void updateEntities(double delta) {
 		Collider col;
 		colDetect.clear();
@@ -178,7 +195,10 @@ public final class Game {
 	}
 	
 	public void destroy() {
-		for (Entity ent : destroyQueue) {
+		int size = destroyQueue.size();
+		
+		for (int i = 0; i < size; i++) {
+			Entity ent = destroyQueue.get(i);
 			if (ent == null) continue;
 			entities.remove(ent);
 		}
@@ -204,16 +224,13 @@ public final class Game {
 		}
 	}
 	
-	public void fatalError() {
-		
-	}
-	
 	private class Comp implements Comparator<Collisionable> {
 
 		@Override
 		public int compare(Collisionable arg0, Collisionable arg1) {
-			double x0 = arg0.getTransform().getPosition().getX();
-			double x1 = arg1.getTransform().getPosition().getX();
+			if (arg0 == null || arg1 == null) return 0;
+			double x0 = Math.round(arg0.getTransform().getPosition().getX());
+			double x1 = Math.round(arg1.getTransform().getPosition().getX());
 
 			return (x0 > x1) ? 1 : ((x1 > x0) ? -1 : 0);
 		}

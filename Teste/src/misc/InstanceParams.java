@@ -1,6 +1,5 @@
 package misc;
 
-
 import game.patterns.Pattern;
 
 public class InstanceParams {
@@ -20,6 +19,8 @@ public class InstanceParams {
 	public double lifeTime = 1.0;
 	public double value = 5;
 	
+	public PatternParams patPar = null;
+	
 	public Pattern pattern = null;
 	
 	public InstanceParams() {
@@ -27,6 +28,10 @@ public class InstanceParams {
 		transform = new Transform();
 		spriteData.alpha = 1.0f;
 		transform.setScale(1);
+	}
+	
+	public String toString() {
+		return "Pattern: " + pattern + "\nSpriteData: " + spriteData + "\nTransform: " + transform + "\npatPar: " + patPar;
 	}
 	
 }

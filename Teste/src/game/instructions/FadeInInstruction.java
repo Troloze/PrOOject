@@ -40,7 +40,7 @@ public final class FadeInInstruction extends Instruction {
 			entity.setAlpha(1.0f);
 			entity.getTransform().setScale(scale);
 		}
-			
+		resetArguments();
 	}
 
 }

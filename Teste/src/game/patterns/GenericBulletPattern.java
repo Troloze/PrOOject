@@ -34,5 +34,6 @@ public class GenericBulletPattern extends Pattern {
 		startS = new GenGet<Double>(Double.class).get(readArgument("StartSize"), 1.0);
 		fadeIn.setArgument("Start", startS);
 		fadeIn.invoke(entity, startTime, currentTime, delta);
+		resetArguments();
 	}
 }

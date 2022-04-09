@@ -7,8 +7,9 @@ import game.Collisionable;
 import game.Game;
 import game.Hazard;
 import game.Sprite;
-import game.patterns.TestEnemyPattern;
+import game.patterns.GenericEnemyPattern;
 import misc.InstanceParams;
+import misc.PatternParams;
 import misc.Transform;
 
 public class Enemy extends Hazard implements SpriteHolder {
@@ -16,6 +17,8 @@ public class Enemy extends Hazard implements SpriteHolder {
 	private int t = 0;
 	private Sprite spr;
 	private double value;
+	private PatternParams patPar;
+	
 	
 	public Enemy(InstanceParams instPar) {
 		super();
@@ -29,11 +32,11 @@ public class Enemy extends Hazard implements SpriteHolder {
 		this.collider.toggleTarget(true);
 		this.collider.setHitbox(43);
 		this.collider.setDamagebox(10);
-		//this.speed = 200;
 		this.value = instPar.value;
 		this.spr = new Sprite(this);
-		this.pattern = TestEnemyPattern.getInstance();
 		this.spr.set(instPar.spriteData.type, instPar.spriteData.color);
+		this.pattern = GenericEnemyPattern.getInstance();
+		this.patPar = instPar.patPar;
 	}
 
 
@@ -50,36 +53,25 @@ public class Enemy extends Hazard implements SpriteHolder {
 	@Override
 	public void onCollision(Collisionable collider) {
 		hit(collider.getDamage());
+		if (!alive) Game.addScore(value);
 	}
 
 	@Override
 	public void update(double delta) {
-		pattern.setArgument("T", t++);
-		pattern.setArgument("Sleep", 10);
-		pattern.setArgument("Amount", 16);
-		pattern.setArgument("Spread", 360.0);
-		pattern.setArgument("Direction", 0);
-		//pattern.setArgument("Speed", 100.0);
-		InstanceParams par = new InstanceParams();
-		par.speed = 500;
-		par.rotationSpeed = 50;
-		par.rotationAcceleration = 1;
-		par.acceleration = 20;
-		par.transform.setZPosition(10.01);
-		par.spriteData.type = ImageBufferHandler.HOLLOW;
-		par.spriteData.color = (int) (Math.random() * 7);
-		par.lifeTime = 10;
-		par.transform = transform;
-		pattern.setArgument("InstParams", par);
+		t += 1;
+		pattern.setArgument("T", t);
+		for (int i = 0; i < patPar.n; i++) pattern.setArgument(patPar.keys[i], patPar.arguments[i]);
 		baseUpdate(delta);
 		transform.setRotation(transform.getRotation() + 200 * delta);
+		
+		if (Math.abs(transform.getPosition().getX()) > 500) destroy();
+		if (Math.abs(transform.getPosition().getY()) > 400) destroy();
 	}
 
 	@Override
 	public void destroy() {
 		if (destroyed) return;
 		baseDestroy();
-		Game.addScore(value);
 		if (spr != null) spr.destroy();
 		spr = null;
 		destroyed = true;

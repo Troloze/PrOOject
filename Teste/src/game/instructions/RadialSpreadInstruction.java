@@ -4,9 +4,11 @@ import java.awt.geom.Point2D;
 
 import engine.ImageBufferHandler;
 import game.EntityInstancer;
+import game.Game;
 import game.Hazard;
 import misc.GenGet;
 import misc.InstanceParams;
+import misc.Misc;
 import misc.Transform;
 
 public final class RadialSpreadInstruction extends Instruction {
@@ -28,15 +30,20 @@ public final class RadialSpreadInstruction extends Instruction {
 	public void invoke(Hazard entity, double startTime, double currentTime, double delta) {
 		Object arg;
 		int amount;
-		double spread, direction, thisDir, invAmount, speed;
+		double spread, direction, thisDir, invAmount, speed, dirOff;
+		boolean follow, random;
 		Transform offset;
 		InstanceParams par;
 		
-		
+		follow = new GenGet<Boolean>(Boolean.class).get(readArgument("FollowPlayer"), false);
+		random = new GenGet<Boolean>(Boolean.class).get(readArgument("RandomDir"), false);
 		par = new GenGet<InstanceParams>(InstanceParams.class).get(readArgument("InstParams"), null);	
 		amount = new GenGet<Integer>(Integer.class).get(readArgument("Amount"), 0);	
 		spread = new GenGet<Double>(Double.class).get(readArgument("Spread"), 0.0);
-		direction = new GenGet<Double>(Double.class).get(readArgument("Direction"), 0.0);	
+		dirOff = new GenGet<Double>(Double.class).get(readArgument("RandomRate"), 0.0);
+		if (!follow && !random) direction = new GenGet<Double>(Double.class).get(readArgument("Direction"), 0.0);	
+		else if (follow) direction = Misc.Other.getAngleBetween(entity.getTransform().getPosition(), Game.getInstance().getPlayerPosition());
+		else direction = 360 + (Math.random() - 1/2) * dirOff;
 		speed = new GenGet<Double>(Double.class).get(readArgument("Speed"), 10.0);
 		offset = new GenGet<Transform>(Transform.class).get(readArgument("Direction"), new Transform());
 		
@@ -51,10 +58,15 @@ public final class RadialSpreadInstruction extends Instruction {
 		if (spread > 360) spread = 360.0;
 		while (direction < 360) direction += 360.0;
 		while (direction >= 720) direction -= 360.0;
+		if (amount == 0) {
+			resetArguments();
+			return;
+		}
 		
 		for (int i = 0; i < amount; i++) {
-			invAmount = 1.0/amount;
-			thisDir = (i * spread * invAmount) + (direction - spread * 0.5);
+			if (amount != 1) invAmount = 1.0/(amount - 1);
+			else invAmount = 1.0;
+			thisDir = (i * spread * invAmount) + (direction - ((amount != 1) ? spread * 0.5 : 0));
 			if (par == null) {
 				par = new InstanceParams();
 				par.transform = offset;
@@ -64,10 +76,12 @@ public final class RadialSpreadInstruction extends Instruction {
 				par.spriteData.color = ImageBufferHandler.B_WHITE;
 			} else {
 				par.direction = 360 + thisDir;
+				par.transform.getPosition().setLocation(offset.getPosition());;
+				par.transform.setZPosition(10.01);
 			}
 			EntityInstancer.instance(EntityInstancer.ENT_GENERIC_BULLET, par);
 		}
-		
+		resetArguments();
 	}
 
 }

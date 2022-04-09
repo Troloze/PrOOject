@@ -61,6 +61,9 @@ public class PlayerBullet extends Bullet {
 		}
 		baseUpdate(delta);
 		if (this.spr != null) this.spr.setAlpha((float) this.alpha);
+		
+		if (Math.abs(transform.getPosition().getX()) > 500) destroy();
+		if (Math.abs(transform.getPosition().getY()) > 400) destroy();
 	}
 
 	@Override

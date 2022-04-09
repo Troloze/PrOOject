@@ -21,6 +21,7 @@ public class Player extends Entity implements Collisionable{
 	private double shootCooldown;
 	private double hitCooldown = 0.0;
 	private boolean isFocus = false;
+	private boolean isFast = false;
 	
 	private Entity hitbox;
 	
@@ -78,15 +79,21 @@ public class Player extends Entity implements Collisionable{
 				hitCooldown = 0;
 			}
 		}
-		if (input.getInput(InputHandler.KEY_FOCUS) == 1) {
+		
+		isFocus = input.getInput(InputHandler.KEY_FOCUS) == 1;
+		isFast = input.getInput(InputHandler.KEY_BOMB) == 1;
+		if (isFocus && !isFast) {
 			rate = 0.4;
-			isFocus = true;
 			if (hitbox != null) ((PlayerHitbox) hitbox).show();
 		}
-		else {
-			isFocus = false;
+		if (!isFocus && isFast) {
+			rate = 2.0;
 			if (hitbox != null) ((PlayerHitbox) hitbox).hide();
 		}
+		if (isFocus == isFast) {
+			if (hitbox != null) ((PlayerHitbox) hitbox).hide();
+		}
+		
 		
 		if(input.getInput(InputHandler.KEY_UP) == 1) {
 			transform.getPosition().setLocation(transform.getPosition().getX(), transform.getPosition().getY() - (PLAYER_SPEED * delta * rate));
@@ -104,6 +111,8 @@ public class Player extends Entity implements Collisionable{
 			transform.getPosition().setLocation(transform.getPosition().getX() + (PLAYER_SPEED * delta * rate), transform.getPosition().getY());
 		}
 		
+	
+		
 		if (transform.getPosition().getX() < -455) {
 			transform.getPosition().setLocation(-455, transform.getPosition().getY());
 		}
@@ -120,6 +129,8 @@ public class Player extends Entity implements Collisionable{
 			transform.getPosition().setLocation(transform.getPosition().getX(), 345);
 		}
 		
+		Game.getInstance().setPPos(transform.getPosition());
+		
 		((PlayerHitbox) hitbox).move();
 		
 		if(shootCooldown < System.nanoTime()/1000000000.0) {
@@ -128,48 +139,34 @@ public class Player extends Entity implements Collisionable{
 				InstanceParams par = new InstanceParams();
 				par.transform = new Transform(transform);
 				par.transform.getPosition().setLocation(
-						transform.getPosition().getX() + ((isFocus) ? -20 : -40), 
+						transform.getPosition().getX() + 
+						((isFocus == isFast) ? -40 : ((isFocus) ? -20 : -50)), 
 						transform.getPosition().getY());
 				par.transform.getDefaultScale().setLocation(25, 25);
 				par.transform.setScale(1);
 				par.transform.setZPosition(10);
-				par.direction = (isFocus) ? 90 : 85;
+				par.direction = isFocus ? 90 : 85;
+				par.direction = (isFocus == isFast) ? 85 : ((isFocus) ? 90 : 70);
 				
 				
 				
 				EntityInstancer.instance(EntityInstancer.ENT_PLAYER_BULLET, par);
 				
-				par.direction = isFocus ? 90 : 95;
+				par.direction = (isFocus == isFast) ? 95 : ((isFocus) ? 90 : 110);
 				par.transform.getPosition().setLocation(
-						transform.getPosition().getX() + ((isFocus) ? 20 : 40), 
+						transform.getPosition().getX() + 
+						((isFocus == isFast) ? 40 : ((isFocus) ? 20 : 50)), 
 						transform.getPosition().getY());
 				EntityInstancer.instance(EntityInstancer.ENT_PLAYER_BULLET, par);
 				
 				par.direction = 90;
 				par.transform.getPosition().setLocation(
 						transform.getPosition().getX(), 
-						transform.getPosition().getY() + ((isFocus) ? -20 : 0));
+						transform.getPosition().getY() + 
+						((isFocus == isFast) ? -10 : ((isFocus) ? -20 : 0)));
 				EntityInstancer.instance(EntityInstancer.ENT_PLAYER_BULLET, par);
 			}
-		}
-		
-		if (input.getInput(InputHandler.KEY_FOCUS) == 0) {
-			InstanceParams par = new InstanceParams();
-
-			par.transform = new Transform(transform);
-			par.transform.getPosition().setLocation(-500, -100);
-			par.transform.getDefaultScale().setLocation(50, 43);
-			par.transform.setScale(1);
-			par.transform.setZPosition(10);
-			par.pattern = TestEnemyPattern.getInstance();
-			par.spriteData.alpha = 1.0f;
-			par.spriteData.type = ImageBufferHandler.TRIANGLE;
-			par.spriteData.color = ImageBufferHandler.T_ORANGE1;
-			par.lifeTime = 10.0;
-			par.speed = 100;
-			EntityInstancer.instance(EntityInstancer.ENT_TEST_ENEMY, par);
-		}
-		
+		}	
 	}
 
 	@Override
