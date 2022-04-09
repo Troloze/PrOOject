@@ -66,7 +66,7 @@ public class MyFileWriter {
 			
 		try {
 			newFile.createNewFile();
-			System.out.println("Path " + newFile.getAbsolutePath() + " don't exists...");
+			System.out.println("Path " + newFile.getAbsolutePath() + " doesn't exist...");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

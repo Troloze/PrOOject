@@ -9,7 +9,7 @@ public class GetGoodException extends Exception {
 	
 	public GetGoodException(int score) {
 		this.plrScore = score;
-		this.minScore = 500000;
+		this.minScore = 100000;
 	}
 	
 	public int getPlrScore() {

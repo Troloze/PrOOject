@@ -17,7 +17,8 @@ public class InstanceParams {
 	public double direction = 0.0;
 	public double life = 0.0;
 	public double damage = 0.0;
-	public double lifeTime = 0.0;
+	public double lifeTime = 1.0;
+	public double value = 5;
 	
 	public Pattern pattern = null;
 	
@@ -26,7 +27,6 @@ public class InstanceParams {
 		transform = new Transform();
 		spriteData.alpha = 1.0f;
 		transform.setScale(1);
-		lifeTime = 1.0;
 	}
 	
 }

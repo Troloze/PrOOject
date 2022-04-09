@@ -16,20 +16,17 @@ public final class Renderer {
 
 	private static Renderer instance;
 	private static List<Sprite> addQueue = null;
-	private static List<Sprite> updateQueue = null;
 	private static List<Sprite> destroyQueue = null;
 	private static PriorityQueue<Sprite> gameBuffer = null;
 	private static PriorityQueue<Sprite> gameBuffer2 = null;
 	private static List<Sprite> testBuffer = null;
 		
 	private static bufferComparator bC;
-	
-	private static boolean renderLock = false;
+
 	private static boolean toUpdate = false;
 	
 	private Renderer() {
 		addQueue = new ArrayList<>();
-		updateQueue = new ArrayList<>();
 		destroyQueue = new ArrayList<>();
 		bC = new bufferComparator();
 		gameBuffer = new PriorityQueue<>(100, bC);
@@ -71,7 +68,6 @@ public final class Renderer {
 	}
 	
 	public void render(Graphics2D g2) {
-		renderLock = true;
 		BufferedImage im;
 		ImageData data;
 		float alpha = 1.0f;
@@ -118,7 +114,6 @@ public final class Renderer {
 			}
 			
 		}
-		renderLock = false;
 		addQueued();
 		updateQueued();
 		destroyQueued();

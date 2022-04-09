@@ -7,12 +7,14 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 import misc.ImageData;
+import misc.NotFoundException;
 
 public final class ImageBufferHandler {
 	private static BufferedImage buffer[];
 	private static int bufferSize;
 	private static ImageBufferHandler instance = null;
 	private static FileHandler file;
+	private static boolean isWorking;
 	
 	private static final int TYPE_C = 10;
 	private static final int QUALITY_C = 5;
@@ -120,15 +122,42 @@ public final class ImageBufferHandler {
 	public static final Point2D BULLET_CENTER_OFFSET = 	new Point2D.Double(-1.0 / 2.0, -1.0 / 2.0);
 	public static final Point2D TRIANGLE_CENTER_OFFSET =new Point2D.Double(-1.0 / 2.0, -2.0 / 3.0);
 	
-	private ImageBufferHandler() {
-		int c = 0;
+	private ImageBufferHandler() throws NotFoundException{
+		boolean issue = false;
+		int issueI = 0;
+		int issueJ = 0;
+		int issueK = 0;
+		int c;
+		
+		file = FileHandler.getInstance();
+		
+		for (int i = 0; i < TYPE_C; i++) {
+			for (int j = 0; j < TYPE_V[i]; j++) {
+				for (int k = 0; k < QUALITY_C; k++) {
+					if (!file.fileExists(PATH + TYPE[i] + "/" + 
+							QUALITY[k] + "_" + 
+							((i == TRIANGLE) ? T_COLOR[j] : B_COLOR[j]) + SUFFIX)) {
+						issueI = i;
+						issueJ = j;
+						issueK = k;
+						issue = true;
+						break;
+					}
+				}
+				if (issue) break;
+			}
+			if (issue) break;
+		}
+		
+		if (issue) throw new NotFoundException("Not found: " + PATH + TYPE[issueI] + "/" + QUALITY[issueK] + "_" + ((issueI == TRIANGLE) ? T_COLOR[issueJ] : B_COLOR[issueJ]) + SUFFIX);
+		
+		c = 0;
 		for (int i: TYPE_V) c += i;
-	
+		
 		c *= QUALITY_C;
 		buffer = new BufferedImage[c];
 		bufferSize = c;
-		//System.out.println(c);
-		file = FileHandler.getInstance();
+		
 	}
 	
 	public static void getImageData(ImageData ret, int bullet, double scale) {
@@ -195,7 +224,14 @@ public final class ImageBufferHandler {
 	
 	public static ImageBufferHandler getInstance() {
 		if (instance == null) {
-			instance = new ImageBufferHandler();
+			try {
+			
+				instance = new ImageBufferHandler();
+			} catch (NotFoundException nFE) {
+				nFE.printStackTrace();
+				System.out.println(nFE.string);
+				instance = null;
+			}
 		}
 		return instance;
 	}
@@ -204,6 +240,7 @@ public final class ImageBufferHandler {
 		getInstance();
 		int pos = 0, typeIndex = 0, colorIndex = 0;
 		Image im;
+		boolean exists;
 		if (type >= TYPE_C || type < 0) {
 			System.out.println("Invalid Type");
 			return null;
@@ -216,8 +253,7 @@ public final class ImageBufferHandler {
 			System.out.println("Invalid Quality");
 			return null;
 		}
-		//System.out.println(PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + B_COLOR[color] + SUFFIX);
-		
+			
 		for (int i = 0; i < type; i++) typeIndex += TYPE_V[i] * QUALITY_C;
 		colorIndex = color * QUALITY_C;
 		
@@ -230,23 +266,24 @@ public final class ImageBufferHandler {
 		
 		
 		if (buffer[pos] == null) {
-			if (type != TRIANGLE) {
-				im = file.openImage(PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + B_COLOR[color] + SUFFIX);
-				if (im.getWidth(null) == -1) {
-					{
-						System.out.println("Invalid Path:" + PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + B_COLOR[color] + SUFFIX);
-						return null;
-					}		
-				}
-			} 
-			else {
-				im = file.openImage(PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + T_COLOR[color] + SUFFIX);
-				if (im.getWidth(null) == -1) {
-					System.out.println("Invalid Path:" + PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + T_COLOR[color] + SUFFIX);
-					return null;
-				}
+			
+			exists = file.fileExists(PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + ((type == TRIANGLE) ? T_COLOR[color] : B_COLOR[color]) + SUFFIX);
+			
+			if (!exists) {
+				isWorking = false;
+				System.out.println("File does not exist: " + PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + ((type == TRIANGLE) ? T_COLOR[color] : B_COLOR[color]) + SUFFIX);
+				System.exit(0);
 			}
 			
+			im = file.openImage(PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + ((type == TRIANGLE) ? T_COLOR[color] : B_COLOR[color]) + SUFFIX);
+			
+			
+			if (im.getWidth(null) == -1) {
+				{
+					System.out.println("Invalid Path:" + PATH + TYPE[type] + "/" + QUALITY[quality] + "_" + ((type == TRIANGLE) ? T_COLOR[color] : B_COLOR[color]) + SUFFIX);
+					return null;
+				}		
+			}
 			buffer[pos] = toBuffer(im);
 		}
 		

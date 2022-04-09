@@ -2,15 +2,13 @@ package game;
 
 import java.awt.Graphics2D;
 
-public class RankInfo {
+public final class RankInfo {
 	private static RankInfo instance;
 	
 	private String name;
 	private int score;
 	
-	private RankInfo() {
-		
-	}
+	private RankInfo() {}
 	
 	public RankInfo(String name, int score) {
 		this.name = name;

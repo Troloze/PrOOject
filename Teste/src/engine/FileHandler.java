@@ -49,4 +49,10 @@ public class FileHandler {
 		File file = new File(directory);
 		file.delete();
 	}
+	
+	public boolean fileExists(String directory) {
+		File file = new File(directory);
+		return file.exists();
+	}
+	
 }

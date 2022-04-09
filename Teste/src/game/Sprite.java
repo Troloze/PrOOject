@@ -127,7 +127,6 @@ public final class Sprite {
 			zPosition = offsetZPosition;
 		}
 		Transform transform = body.getTransform();
-		if (alpha == 0.9) System.out.println(offsetPosition);
 		if (transform == null) {
 			position.setLocation(offsetPosition);
 			scale.setLocation(offsetScale);

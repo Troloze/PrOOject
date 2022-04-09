@@ -24,6 +24,9 @@ public class Player extends Entity implements Collisionable{
 	
 	private Entity hitbox;
 	
+	private int hp = 0;
+	private final int hpMax = 3;
+	
 	public static Entity newInstance() {
 		return new Player();
 	}
@@ -47,7 +50,8 @@ public class Player extends Entity implements Collisionable{
 
 		this.destroyed = false;
 		this.shootCooldown = (System.nanoTime()/1000000000.0) + 0.1;
-
+		
+		this.hp = hpMax;
 	}
 
 	public void setHitbox(Entity hitbox) {
@@ -178,6 +182,7 @@ public class Player extends Entity implements Collisionable{
 		if (destroyed) return;
 		if (sprite != null) sprite.destroy();
 		if (hitbox != null) hitbox.destroy();
+
 		sprite = null;
 		destroyed = true;
 	}
@@ -192,9 +197,12 @@ public class Player extends Entity implements Collisionable{
 	public void onCollision(Collisionable collider) {
 		//collider.destroy();
 		if (hitCooldown > 0.0) return;
-		
+		hp -= 1;
+		if (hp == 0) {
+			destroy();
+			GameStateHandler.setState(GameStateHandler.STATE_LOSE);
+		}
 		hitCooldown = downTime;
-		System.out.println(Game.getScore());
 	}
 
 	@Override

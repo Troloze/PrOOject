@@ -157,7 +157,7 @@ public class GameStateHandler {
 		} else if (inputHandler.getInput(InputHandler.KEY_SHOOT) == 0) {
 			if(keyBoard.getChar() == '>') {
 				mainInfo.setName(keyBoard.getString());
-				mainInfo.setScore(1000000);
+				mainInfo.setScore(RankInfo.getInstance().getScore());
 				rankList.sortRankList();
 				rankList.save();
 				keyBoard.setDefault();
@@ -195,7 +195,7 @@ public class GameStateHandler {
 	}
 	
 	public void quit() throws GetGoodException {
-		if(mainInfo.getScore() < 500000) {
+		if(mainInfo.getScore() < 100000) {
 			GetGoodException e = new GetGoodException(mainInfo.getScore());
 			throw e;
 		}
@@ -204,16 +204,16 @@ public class GameStateHandler {
 	}
 	
 	public void gameOver() {
-    if(lifeTime == 0) lifeTime = System.nanoTime();
-      if((System.nanoTime() - lifeTime) >= 2000000000.0) {
-        Game.getInstance().destroyAll();
-        if(rankList.isEligible()) {
-          setState(STATE_INSERTING);
-        } else {
-          setState(STATE_RANKING);
-        }
-
-      }
+		if(lifeTime == 0) lifeTime = System.nanoTime();
+	    if((System.nanoTime() - lifeTime) >= 4000000000.0) {
+	    	Game.getInstance().destroyAll();
+	    	lifeTime = 0;
+	    	if(rankList.isEligible()) {
+	    		setState(STATE_INSERTING);
+	    	} else {
+	        	setState(STATE_RANKING);
+	        }
+	    }
 	}
 	
 	public void reset() {

@@ -15,6 +15,7 @@ public class Enemy extends Hazard implements SpriteHolder {
 
 	private int t = 0;
 	private Sprite spr;
+	private double value;
 	
 	public Enemy(InstanceParams instPar) {
 		super();
@@ -28,8 +29,8 @@ public class Enemy extends Hazard implements SpriteHolder {
 		this.collider.toggleTarget(true);
 		this.collider.setHitbox(43);
 		this.collider.setDamagebox(10);
-		this.life = 30;
 		//this.speed = 200;
+		this.value = instPar.value;
 		this.spr = new Sprite(this);
 		this.pattern = TestEnemyPattern.getInstance();
 		this.spr.set(instPar.spriteData.type, instPar.spriteData.color);
@@ -49,7 +50,6 @@ public class Enemy extends Hazard implements SpriteHolder {
 	@Override
 	public void onCollision(Collisionable collider) {
 		hit(collider.getDamage());
-		Game.addScore(100);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class Enemy extends Hazard implements SpriteHolder {
 		par.rotationAcceleration = 1;
 		par.acceleration = 20;
 		par.transform.setZPosition(10.01);
-		par.spriteData.type = ImageBufferHandler.QUARTER;
+		par.spriteData.type = ImageBufferHandler.HOLLOW;
 		par.spriteData.color = (int) (Math.random() * 7);
 		par.lifeTime = 10;
 		par.transform = transform;
@@ -79,7 +79,7 @@ public class Enemy extends Hazard implements SpriteHolder {
 	public void destroy() {
 		if (destroyed) return;
 		baseDestroy();
-		Game.addScore(10000);
+		Game.addScore(value);
 		if (spr != null) spr.destroy();
 		spr = null;
 		destroyed = true;

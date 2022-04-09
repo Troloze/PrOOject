@@ -18,7 +18,7 @@ public final class Game {
 	private GameStateHandler stateHandler;
 	private InputHandler input;
 	
-	private static int score = 0;
+	private static double score = 0;
 		
 	private static List<Entity> entities;
 	private static List<Entity> waitEntities;
@@ -52,6 +52,7 @@ public final class Game {
 	
 	public void startGame() {
 		score = 0;
+		RankInfo.getInstance().setScore(0);
 		EntityInstancer.instance(EntityInstancer.ENT_PLAYER, null);
 	}
 	
@@ -63,19 +64,24 @@ public final class Game {
 	}
 	
 	public void gameUpdate(double delta) {
-
-		if(GameStateHandler.getState() == GameStateHandler.STATE_PLAYING) {
-			if(input.getInput(InputHandler.KEY_PAUSE) == 0) stateHandler.setState(GameStateHandler.STATE_PAUSED);
+		stateHandler.updateState();
+		
+		if(GameStateHandler.getState() == GameStateHandler.STATE_PLAYING || GameStateHandler.getState() == GameStateHandler.STATE_LOSE) {
+			if(input.getInput(InputHandler.KEY_PAUSE) == 0) GameStateHandler.setState(GameStateHandler.STATE_PAUSED);
+			score += (5 * delta);
+			RankInfo.getInstance().setScore((int) (score) * 100);
 			updateEntities(delta);
 			updateCollision();
 			destroy();
 			addNewEntities();
-			score += (int) (1000.0 * delta);
-		} else {
-			//updateEntities(delta);
-			if (GameStateHandler.getState() != GameStateHandler.STATE_PAUSED) background.update(delta); 
-			stateHandler.updateState();
+		} 
+		else if (GameStateHandler.getState() != GameStateHandler.STATE_PAUSED) {
+			background.update(delta); 
+			return;
 		}
+		
+			
+		
 		
 		
 	}
@@ -179,11 +185,11 @@ public final class Game {
 		destroyQueue.clear();
 	}
 	
-	public static int getScore() {
+	public static double getScore() {
 		return score;
 	}
 	
-	public static void addScore(int i) {
+	public static void addScore(double i) {
 		score += i;
 	}
 	
@@ -196,6 +202,10 @@ public final class Game {
 			g2.setColor(Color.red);
 			g2.drawOval((int) ent.getTransform().getPosition().getX() + 640, (int) ent.getTransform().getPosition().getY() + 480, 25, 25);
 		}
+	}
+	
+	public void fatalError() {
+		
 	}
 	
 	private class Comp implements Comparator<Collisionable> {

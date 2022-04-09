@@ -16,7 +16,7 @@ public class KeyBoard {
 	
 	private int charYPosition = 0;
 	private int charXPosition = 0;
-	private String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?,0123456789-_()|/\\ <>";
+	private final String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?,0123456789-_()|/\\ <>";
 	
 	private char[] chars;
 	private int charsIndex = 0;
@@ -71,7 +71,6 @@ public class KeyBoard {
 			positionYStr = TextParameter.STRING_PANEL_X_CENTER - (int) (((double) charsIndex / 2.0) * TextParameter.KEYBOARD_FONT_SIZE) + (i * TextParameter.KEYBOARD_FONT_SIZE);
 			
 			g2.drawString(String.valueOf(chars[i]), positionYStr, positionXStr);
-			System.out.println(String.valueOf(chars));
 		}
 	}
 	
